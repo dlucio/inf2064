@@ -1,0 +1,151 @@
+body {
+  margin: 0px;
+  /* overflow: hidden; */
+  color: black;
+  text-align: center;
+}
+
+h1 {
+  width: 100%;
+  z-index: 1;
+  font-size: 2.5rem;
+}
+
+h2 {
+  width: 100%;
+  z-index: 1;
+  /* text-align: center; */
+  text-align: left;
+}
+
+.statement {
+  font-size: 2.0rem;
+  width: 100%;
+  z-index: 1;
+  text-align: center;
+}
+
+a {
+  color: darkslateblue;
+}
+
+a:hover {
+  color: purple;
+}
+
+li {
+  padding-bottom: 0.2em;
+}
+
+#scene-container {
+  margin-top: 1em;
+  height: 40em;
+  min-width: 35em;
+  top: 2em;
+}
+
+.title {
+  font-weight: 900;
+  color: white;
+  text-shadow: 0.075em 0.05em 0.1em rgba(0, 0, 0, 1);
+}
+
+
+.wrapper {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+/* We tell all items to be 100% width, via flex-basis */
+.wrapper > * {
+  flex: 1 100%;
+}
+
+.aside {
+ text-align: left;
+}
+
+/* We rely on source order for mobile-first approach
+ * in this case:
+ * 1. header
+ * 2. article
+ * 3. aside 1
+ * 4. aside 2
+ * 5. footer
+ */
+
+/* Medium screens */
+@media all and (min-width: 600px) {
+  /* We tell both sidebars to share a row */
+  .aside { flex: 1 auto;}
+}
+
+/* Large screens */
+@media all and (min-width: 800px) {
+  /* We invert order of first sidebar and main
+   * And tell the main element to take twice as much width as the other two sidebars 
+   */
+  .main { flex: 2 0px; }
+  .aside-1 { order: 1; }
+  .main    { order: 2; }
+  .aside-2 { order: 3; }
+  .footer  { order: 4; }
+}
+
+.btn {
+  color: #0099CC;
+  background: transparent;
+  border: 2px solid #0099CC;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.btn1 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #008CBA;
+}
+
+.btn1:hover {
+  background-color: #008CBA;
+  color: white;
+}
+
+.work-container {
+  display: flex;
+  flex-direction: column;
+  align-self: auto;
+  margin-left: 20%;
+  margin-right: 20%;
+}
+/* https://www.w3.org/Style/Examples/007/center.en.html */
+div.container5 {
+  height: 10em;
+  display: flex;
+  align-items: left;
+  /* background-color: #008CBA; */
+}
+div.container5 p {
+  margin: 0;
+}
+div.container6 {
+  height: 3em;
+  display: flex;
+  align-items: center;
+}
+div.container6 p {
+  margin: 0;
+  font-size: 1.3em;
+}
+
