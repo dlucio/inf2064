@@ -44,6 +44,8 @@ function setupGui() {
     this.blurRadius = 5.0;
     this.threshold = 127.5;
     this.showThresholded = false;
+    this.drawKeypoints = true;
+    this.drawSkeleton = true;
   };
 
   params = new Parameters();
@@ -51,6 +53,8 @@ function setupGui() {
   gui.add(params, 'blurRadius', 1.0, 10.0).step(0.1);
   gui.add(params, 'threshold', 0, 255).step(0.1);
   gui.add(params, 'showThresholded');
+  gui.add(params, 'drawKeypoints');
+  gui.add(params, 'drawSkeleton');
 }
 
 let captureMat, gray, blurred, thresholded;
@@ -145,8 +149,13 @@ function draw() {
   }
 
   // We can call both functions to draw all keypoints and the skeletons
-  drawKeypoints();
-  drawSkeleton();
+  if (params.drawKeypoints) {
+    drawKeypoints();
+  }
+
+  if (params.drawSkeleton) {
+    drawSkeleton();
+  }
 }
 
 // A function to draw ellipses over the detected keypoints
