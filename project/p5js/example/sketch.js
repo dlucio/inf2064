@@ -10,6 +10,7 @@ PoseNet example using p5.js
 
 let video;
 let poseNet;
+let stats;
 let poses = [];
 let w = 640;
 let h = 480;
@@ -29,7 +30,11 @@ function setup() {
   });
   // Hide the video element, and just show the canvas
   video.hide();
+  
   setupGui();
+  stats = new Stats();
+  stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+  document.body.appendChild( stats.dom );
 }
 
 function modelReady() {
@@ -77,6 +82,8 @@ function cvReady() {
 
 function draw() {
   const showThresholded = params.showThresholded;
+
+  stats.begin();
 
   if (cvReady()) {
     video.loadPixels();
@@ -146,16 +153,19 @@ function draw() {
       //            var minAreaEllipse = cv.ellipse1(contour);
       //            var fitEllipse = cv.fitEllipse(contour);
     }
-  }
 
+  }
+  
   // We can call both functions to draw all keypoints and the skeletons
   if (params.drawKeypoints) {
     drawKeypoints();
   }
-
+  
   if (params.drawSkeleton) {
     drawSkeleton();
   }
+  
+  stats.end();
 }
 
 // A function to draw ellipses over the detected keypoints
