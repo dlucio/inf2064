@@ -29,12 +29,28 @@ function setup() {
   });
   // Hide the video element, and just show the canvas
   video.hide();
+  setupGui();
 }
 
 function modelReady() {
 
   select('#status').html('Model Loaded');
-  
+}
+
+let params;
+let gui;
+function setupGui() {
+  let Parameters = function() {
+    this.blurRadius = 5.0;
+    this.threshold = 127.5;
+    this.showThresholded = false;
+  };
+
+  params = new Parameters();
+  gui = new dat.GUI();
+  gui.add(params, 'blurRadius', 1.0, 10.0).step(0.1);
+  gui.add(params, 'threshold', 0, 255).step(0.1);
+  gui.add(params, 'showThresholded');
 }
 
 let captureMat, gray, blurred, thresholded;
@@ -56,18 +72,15 @@ function cvReady() {
 }
 
 function draw() {
-  let showThresholded = select('#showThresholded').checked();
+  const showThresholded = params.showThresholded;
 
   if (cvReady()) {
     video.loadPixels();
     if (video.pixels.length > 0) {
       captureMat.data.set(video.pixels);
 
-      let blurRadius = select('#blurRadius').value();
-      blurRadius = map(blurRadius, 0, 100, 1, 10);
-
-      let threshold = select('#threshold').value();
-      threshold = map(threshold, 0, 100, 0, 255);
+      const blurRadius = params.blurRadius;
+      const threshold = params.threshold;
 
       cv.cvtColor(captureMat, gray, cv.COLOR_RGBA2GRAY, 0);
       cv.blur(gray, blurred, new cv.Size(blurRadius, blurRadius), new cv.Point(-1, -1), cv.BORDER_DEFAULT);
