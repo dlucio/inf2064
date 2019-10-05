@@ -348,24 +348,6 @@ async function poseDetectionFrame() {
       minPartConfidence = +guiState.multiPoseDetection.minPartConfidence;
       break;
   }
-
-  // For each pose (i.e. person) detected in an image, loop through the poses
-  // and draw the resulting skeleton and keypoints if over certain confidence
-  // scores
-  // poses.forEach(({score, keypoints}) => {
-  //   if (score >= minPoseConfidence) {
-  //     if (guiState.output.showPoints) {
-  //       drawKeypoints(keypoints, minPartConfidence);
-  //     }
-  //     if (guiState.output.showSkeleton) {
-  //       drawSkeleton(keypoints, minPartConfidence);
-  //     }
-  //     if (guiState.output.showBoundingBox) {
-  //       drawBoundingBox(keypoints);
-  //     }
-  //   }
-  // });
-
 }
 
 function draw() {
@@ -452,52 +434,61 @@ function draw() {
   }
   */
   
-  poseDetectionFrame().then( () => {
-    // We can call both functions to draw all keypoints and the skeletons
-    if (guiState.output.showPoints) {
-      drawKeypoints();
-    }
-    
-    if (guiState.output.showSkeleton) {
-      drawSkeleton();
-    }
-  });
 
+  poseDetectionFrame().then( () => {
+   
+    // For each pose (i.e. person) detected in an image, loop through the poses
+    // and draw the resulting skeleton and keypoints if over certain confidence
+    // scores
+    // console.log(poses);
+    
+    poses.forEach(element => {
+      const pose = element.pose;
+
+      if (pose.score >= minPoseConfidence) {
+        if (guiState.output.showPoints) {
+          drawKeypoints(pose.keypoints);
+        }
+        if (guiState.output.showSkeleton) {
+          drawSkeleton(element.skeleton);
+        }
+        if (guiState.output.showBoundingBox) {
+          drawBoundingBox(element.boundingBox)
+        }
+      }
+      // console.log(element, pose.score, minPoseConfidence);
+      
+    });
+      
+  });
   
   stats.end();
 }
 
 // A function to draw ellipses over the detected keypoints
-function drawKeypoints() {
-  // Loop through all the poses detected
-  for (let i = 0; i < poses.length; i++) {
-    // For each pose detected, loop through all the keypoints
-    let pose = poses[i].pose;
-    for (let j = 0; j < pose.keypoints.length; j++) {
-      // A keypoint is an object describing a body part (like rightArm or leftShoulder)
-      let keypoint = pose.keypoints[j];
-      // Only draw an ellipse is the pose probability is bigger than 0.2
-      if (keypoint.score > minPartConfidence) {
-        fill(255, 0, 0);
-        noStroke();
-        ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
-      }
+function drawKeypoints(keypoints) {
+  for (let j = 0; j < keypoints.length; j++) {
+    // A keypoint is an object describing a body part (like rightArm or leftShoulder)
+    let keypoint = keypoints[j];
+    // Only draw an ellipse is the pose probability is bigger than minPartConfidence
+    if (keypoint.score > minPartConfidence) {
+      fill(255, 0, 0);
+      noStroke();
+      const r=15;
+      ellipse(keypoint.position.x, keypoint.position.y, r, r);
     }
   }
 }
 
 // A function to draw the skeletons
-function drawSkeleton() {
-  // Loop through all the skeletons detected
-  for (let i = 0; i < poses.length; i++) {
-    let skeleton = poses[i].skeleton;
-    // For every skeleton, loop through all body connections
-    for (let j = 0; j < skeleton.length; j++) {
-      let partA = skeleton[j][0];
-      let partB = skeleton[j][1];
-      stroke(255, 0, 0);
-      line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
-    }
+function drawSkeleton(skeleton) {
+  // For every skeleton, loop through all body connections
+  for (let j = 0; j < skeleton.length; j++) {
+    let partA = skeleton[j][0];
+    let partB = skeleton[j][1];
+    stroke(255, 0, 0);
+    strokeWeight(4);
+    line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
   }
 }
 
@@ -506,12 +497,13 @@ function drawSkeleton() {
  * in an image, the bounding box will begin at the nose and extend to one of
  * ankles
  */
-function drawBoundingBox(keypoints) {
-  // const boundingBox = posenet.getBoundingBox(keypoints);
-
-  // ctx.rect(
-  //     boundingBox.minX, boundingBox.minY, boundingBox.maxX - boundingBox.minX,
-  //     boundingBox.maxY - boundingBox.minY);
+function drawBoundingBox(boundingBox) {
+  noFill();
+  strokeWeight(4);
+  stroke(255, 0, 255);
+  rect(
+      boundingBox.minX, boundingBox.minY, boundingBox.maxX - boundingBox.minX,
+      boundingBox.maxY - boundingBox.minY);
 
   // ctx.strokeStyle = boundingBoxColor;
   // ctx.stroke();
