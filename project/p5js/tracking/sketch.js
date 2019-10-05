@@ -15,26 +15,33 @@ let poses = [];
 let w = 640;
 let h = 480;
 
-// let modelConfig = {
-//   architecture: guiState.changeToArchitecture,
-//   outputStride: guiState.outputStride,
-//   inputResolution: guiState.inputResolution,
-//   multiplier: guiState.multiplier,
-// };
+let minPoseConfidence;
+let minPartConfidence;
 
-let config = {
+const defaultQuantBytes = 2;
+
+const defaultMobileNetMultiplier = 0.75; //isMobile() ? 0.50 : 0.75;
+const defaultMobileNetStride = 16;
+const defaultMobileNetInputResolution = 257;
+
+const defaultResNetMultiplier = 1.0;
+const defaultResNetStride = 32;
+const defaultResNetInputResolution = 257;
+
+const config = {
+  architecture: 'MobileNetV1',
   imageScaleFactor: 0.3,
-  outputStride: 16,
+  outputStride: defaultMobileNetStride,
   flipHorizontal: false,
   minConfidence: 0.5,
   maxPoseDetections: 5,
   scoreThreshold: 0.5,
   nmsRadius: 20,
   detectionType: 'multiple',
-  multiplier: 0.75,
-  inputResolution: 513,
-  architecture: 'ResNet50',
-};
+  inputResolution: defaultMobileNetInputResolution, 
+  multiplier: defaultMobileNetMultiplier,
+  quantBytes: 2
+}
 
 function setup() {
   createCanvas(w, h);
@@ -42,16 +49,19 @@ function setup() {
   video.size(width, height);
 
   // Create a new poseNet method with a single detection
-  poseNet = ml5.poseNet(video, config, modelReady);
+  poseNet = ml5.poseNet(video, config,  modelReady);
+  
+
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
   poseNet.on('pose', function (results) {
     poses = results;
   });
+
   // Hide the video element, and just show the canvas
   video.hide();
   
-  setupGui(poseNet);
+  setupGui();
 
   stats = new Stats();
   stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -61,20 +71,9 @@ function setup() {
 function modelReady() {
 
   select('#status').html('Model Loaded');
-  console.log(poseNet);
   
 }
 
-
-const defaultQuantBytes = 2;
-
-const defaultMobileNetMultiplier = 0.75; //isMobile() ? 0.50 : 0.75;
-const defaultMobileNetStride = 16;
-const defaultMobileNetInputResolution = 513;
-
-const defaultResNetMultiplier = 1.0;
-const defaultResNetStride = 32;
-const defaultResNetInputResolution = 257;
 
 const tryResNetButtonName = 'tryResNetButton';
 const tryResNetButtonText = '[New] Try ResNet50';
@@ -93,10 +92,10 @@ const guiState = {
     minPartConfidence: 0.5,
   },
   multiPoseDetection: {
-    maxPoseDetections: 5,
-    minPoseConfidence: 0.15,
-    minPartConfidence: 0.1,
-    nmsRadius: 30.0,
+    maxPoseDetections: config.maxPoseDetections,
+    minPoseConfidence: config.minConfidence,
+    minPartConfidence: config.scoreThreshold,
+    nmsRadius: config.nmsRadius,
   },
   output: {
     showVideo: true,
@@ -104,15 +103,12 @@ const guiState = {
     showPoints: true,
     showBoundingBox: false,
   },
-  net: null,
 };
 
 /**
  * Sets up dat.gui controller on the top-right of the window
  */
-function setupGui(net) {
-  guiState.net = net;
-
+function setupGui() {
   const gui = new dat.GUI({width: 300});
 
   let architectureController = null;
@@ -120,7 +116,6 @@ function setupGui(net) {
     architectureController.setValue('ResNet50')
   };
   gui.add(guiState, tryResNetButtonName).name(tryResNetButtonText);
-  // updateTryResNetButtonDatGuiCss();
 
   // The single-pose algorithm is faster and simpler but requires only one
   // person to be in the frame or results will be innaccurate. Multi-pose works
@@ -232,19 +227,25 @@ function setupGui(net) {
   // Min part confidence: the confidence that a particular estimated keypoint
   // position is accurate (i.e. the elbow's position)
   let single = gui.addFolder('Single Pose Detection');
-  single.add(guiState.singlePoseDetection, 'minPoseConfidence', 0.0, 1.0);
-  single.add(guiState.singlePoseDetection, 'minPartConfidence', 0.0, 1.0);
+  single.add(guiState.singlePoseDetection, 'minPoseConfidence', 0.0, 1.0)
+        .onChange( (value) => poseNet.minConfidence = value );
+  single.add(guiState.singlePoseDetection, 'minPartConfidence', 0.0, 1.0)
+        .onChange( (value) => poseNet.scoreThreshold = value );
 
   let multi = gui.addFolder('Multi Pose Detection');
   multi.add(guiState.multiPoseDetection, 'maxPoseDetections')
       .min(1)
       .max(20)
-      .step(1);
-  multi.add(guiState.multiPoseDetection, 'minPoseConfidence', 0.0, 1.0);
-  multi.add(guiState.multiPoseDetection, 'minPartConfidence', 0.0, 1.0);
+      .step(1)
+      .onChange( (value) => poseNet.maxPoseDetections = value );
+  multi.add(guiState.multiPoseDetection, 'minPoseConfidence', 0.0, 1.0)
+      .onChange( (value) => poseNet.minConfidence = value );
+  multi.add(guiState.multiPoseDetection, 'minPartConfidence', 0.0, 1.0)
+      .onChange( (value) => poseNet.scoreThreshold = value );
   // nms Radius: controls the minimum distance between poses that are returned
   // defaults to 20, which is probably fine for most use cases
-  multi.add(guiState.multiPoseDetection, 'nmsRadius').min(0.0).max(40.0);
+  multi.add(guiState.multiPoseDetection, 'nmsRadius').min(0.0).max(40.0)
+      .onChange( (value) => poseNet.nmsRadius = value );
   multi.open();
 
   let output = gui.addFolder('Output');
@@ -266,10 +267,12 @@ function setupGui(net) {
       case 'single-pose':
         multi.close();
         single.open();
+        poseNet.detectionType = 'single';
         break;
       case 'multi-pose':
         single.close();
         multi.open();
+        poseNet.detectionType = 'multiple';
         break;
     }
   });
@@ -293,11 +296,82 @@ function cvReady() {
   return true;
 }
 
+
+async function poseDetectionFrame() {
+  if (guiState.changeToArchitecture) {
+    poseNet.architecture = guiState.changeToArchitecture;
+    poseNet.load().then( () => console.log("Model Reloaded after architecture changed.") );
+
+    guiState.architecture = guiState.changeToArchitecture;
+    guiState.changeToArchitecture = null;
+  }
+
+  if (guiState.changeToMultiplier) {
+    poseNet.multiplier = +guiState.changeToMultiplier;
+    poseNet.load().then( () => console.log("Model Reloaded after multiplier changed.") );
+    
+    guiState.multiplier = +guiState.changeToMultiplier;
+    guiState.changeToMultiplier = null;
+  }
+
+  if (guiState.changeToOutputStride) {
+    poseNet.outputStride = +guiState.changeToOutputStride;
+    poseNet.load().then( () => console.log("Model Reloaded after outputStride changed.") );
+    
+    guiState.outputStride = +guiState.changeToOutputStride;
+    guiState.changeToOutputStride = null;
+  }
+
+  if (guiState.changeToInputResolution) {
+    poseNet.inputResolution = +guiState.changeToInputResolution;
+    poseNet.load().then( () => console.log("Model Reloaded after inputResolution changed.") );
+    
+    guiState.inputResolution = +guiState.changeToInputResolution;
+    guiState.changeToInputResolution = null;
+  }
+
+  if (guiState.changeToQuantBytes) {
+    poseNet.quantBytes = guiState.changeToQuantBytes;
+    poseNet.load().then( () => console.log("Model Reloaded after quantBytes changed.") );
+
+    guiState.quantBytes = guiState.changeToQuantBytes;
+    guiState.changeToQuantBytes = null;
+  }
+
+  switch (guiState.algorithm) {
+    case 'single-pose':
+      minPoseConfidence = +guiState.singlePoseDetection.minPoseConfidence;
+      minPartConfidence = +guiState.singlePoseDetection.minPartConfidence;
+      break;
+    case 'multi-pose':
+      minPoseConfidence = +guiState.multiPoseDetection.minPoseConfidence;
+      minPartConfidence = +guiState.multiPoseDetection.minPartConfidence;
+      break;
+  }
+
+  // For each pose (i.e. person) detected in an image, loop through the poses
+  // and draw the resulting skeleton and keypoints if over certain confidence
+  // scores
+  // poses.forEach(({score, keypoints}) => {
+  //   if (score >= minPoseConfidence) {
+  //     if (guiState.output.showPoints) {
+  //       drawKeypoints(keypoints, minPartConfidence);
+  //     }
+  //     if (guiState.output.showSkeleton) {
+  //       drawSkeleton(keypoints, minPartConfidence);
+  //     }
+  //     if (guiState.output.showBoundingBox) {
+  //       drawBoundingBox(keypoints);
+  //     }
+  //   }
+  // });
+
+}
+
 function draw() {
   const showThresholded = true;
-
+  
   stats.begin();
-
   /*
   if (cvReady()) {
     video.loadPixels();
@@ -378,14 +452,17 @@ function draw() {
   }
   */
   
-  // We can call both functions to draw all keypoints and the skeletons
-  if (guiState.output.showPoints) {
-    drawKeypoints();
-  }
-  
-  if (guiState.output.showSkeleton) {
-    drawSkeleton();
-  }
+  poseDetectionFrame().then( () => {
+    // We can call both functions to draw all keypoints and the skeletons
+    if (guiState.output.showPoints) {
+      drawKeypoints();
+    }
+    
+    if (guiState.output.showSkeleton) {
+      drawSkeleton();
+    }
+  });
+
   
   stats.end();
 }
@@ -400,7 +477,7 @@ function drawKeypoints() {
       // A keypoint is an object describing a body part (like rightArm or leftShoulder)
       let keypoint = pose.keypoints[j];
       // Only draw an ellipse is the pose probability is bigger than 0.2
-      if (keypoint.score > 0.2) {
+      if (keypoint.score > minPartConfidence) {
         fill(255, 0, 0);
         noStroke();
         ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
@@ -422,4 +499,20 @@ function drawSkeleton() {
       line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
     }
   }
+}
+
+/**
+ * Draw the bounding box of a pose. For example, for a whole person standing
+ * in an image, the bounding box will begin at the nose and extend to one of
+ * ankles
+ */
+function drawBoundingBox(keypoints) {
+  // const boundingBox = posenet.getBoundingBox(keypoints);
+
+  // ctx.rect(
+  //     boundingBox.minX, boundingBox.minY, boundingBox.maxX - boundingBox.minX,
+  //     boundingBox.maxY - boundingBox.minY);
+
+  // ctx.strokeStyle = boundingBoxColor;
+  // ctx.stroke();
 }
