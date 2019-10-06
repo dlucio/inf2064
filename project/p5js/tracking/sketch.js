@@ -15,6 +15,8 @@ let poses = [];
 let w = 640;
 let h = 480;
 
+let isModelReady = false;
+
 let minPoseConfidence;
 let minPartConfidence;
 
@@ -33,7 +35,7 @@ const config = {
   imageScaleFactor: 0.3,
   outputStride: defaultMobileNetStride,
   flipHorizontal: false,
-  minConfidence: 0.5,
+  minConfidence: 0.25,
   maxPoseDetections: 5,
   scoreThreshold: 0.5,
   nmsRadius: 20,
@@ -45,12 +47,13 @@ const config = {
 
 function setup() {
   createCanvas(w, h);
+
   video = createCapture(VIDEO);
   video.size(width, height);
+  // video.showControls(); 
 
   // Create a new poseNet method with a single detection
   poseNet = ml5.poseNet(video, config,  modelReady);
-  
 
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
@@ -69,9 +72,8 @@ function setup() {
 }
 
 function modelReady() {
-
   select('#status').html('Model Loaded');
-  
+  isModelReady = true;
 }
 
 
@@ -103,6 +105,7 @@ const guiState = {
     showPoints: true,
     showBoundingBox: false,
   },
+  estimatePoseEnable: true,
 };
 
 /**
@@ -116,6 +119,14 @@ function setupGui() {
     architectureController.setValue('ResNet50')
   };
   gui.add(guiState, tryResNetButtonName).name(tryResNetButtonText);
+  gui.add(guiState, 'estimatePoseEnable')
+    .name('Estimate Pose')
+    .onChange( (value) => {
+      poseNet.estimatePoseEnable = value;
+      if (value) {
+        poseNet.load().then( () => console.log("Model Reloaded after Estimate Enable.") );
+      }
+    });
 
   // The single-pose algorithm is faster and simpler but requires only one
   // person to be in the frame or results will be innaccurate. Multi-pose works
@@ -350,6 +361,10 @@ async function poseDetectionFrame() {
   }
 }
 
+function onResult(result) {
+  poses = result;
+}
+
 function draw() {
   const showThresholded = true;
   
@@ -435,32 +450,32 @@ function draw() {
   */
   
 
-  poseDetectionFrame().then( () => {
-   
-    // For each pose (i.e. person) detected in an image, loop through the poses
-    // and draw the resulting skeleton and keypoints if over certain confidence
-    // scores
-    // console.log(poses);
+  if (guiState.estimatePoseEnable && isModelReady) {
     
-    poses.forEach(element => {
-      const pose = element.pose;
+    poseDetectionFrame().then( () => {
+    
+      // For each pose (i.e. person) detected in an image, loop through the poses
+      // and draw the resulting skeleton and keypoints if over certain confidence
+      // scores
+      poses.forEach(element => {
+        const pose = element.pose;
 
-      if (pose.score >= minPoseConfidence) {
-        if (guiState.output.showPoints) {
-          drawKeypoints(pose.keypoints);
+        if (pose.score >= minPoseConfidence) {
+          if (guiState.output.showPoints) {
+            drawKeypoints(pose.keypoints);
+          }
+          if (guiState.output.showSkeleton) {
+            drawSkeleton(element.skeleton);
+          }
+          if (guiState.output.showBoundingBox) {
+            drawBoundingBox(element.boundingBox)
+          }
         }
-        if (guiState.output.showSkeleton) {
-          drawSkeleton(element.skeleton);
-        }
-        if (guiState.output.showBoundingBox) {
-          drawBoundingBox(element.boundingBox)
-        }
-      }
-      // console.log(element, pose.score, minPoseConfidence);
-      
+        
+      });
+        
     });
-      
-  });
+  }
   
   stats.end();
 }
