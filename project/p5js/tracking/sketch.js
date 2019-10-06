@@ -320,8 +320,25 @@ function setupGui() {
         break;
     }
   });
+
+
+  // OpenCV options - prepared to lucas-kanade
+  let Parameters = function() {
+    this.blurRadius = 5.0;
+    this.threshold = 127.5;
+    this.showThresholded = true;
+  };
+
+  cvParams = new Parameters();
+  let cvFolder = gui.addFolder('OpenCV Tests');
+  cvFolder.open();
+  cvFolder.add(cvParams, 'blurRadius', 1.0, 10.0).step(0.1);
+  cvFolder.add(cvParams, 'threshold', 0, 255).step(0.1);
+  cvFolder.add(cvParams, 'showThresholded');
+
 }
 
+let cvParams;
 let captureMat, gray, blurred, thresholded;
 let contours, hierarchy;
 function cvSetup() {
@@ -396,17 +413,17 @@ async function poseDetectionFrame() {
 
 
 function draw() {
-  const showThresholded = true;
+  const showThresholded = cvParams.showThresholded;
   
   stats.begin();
-  /*
+  /**/ 
   if (cvReady()) {
     video.loadPixels();
     if (video.pixels.length > 0) {
       captureMat.data.set(video.pixels);
 
-      const blurRadius = params.blurRadius;
-      const threshold = params.threshold;
+      const blurRadius = cvParams.blurRadius;
+      const threshold = cvParams.threshold;
 
       cv.cvtColor(captureMat, gray, cv.COLOR_RGBA2GRAY, 0);
       cv.blur(gray, blurred, new cv.Size(blurRadius, blurRadius), new cv.Point(-1, -1), cv.BORDER_DEFAULT);
@@ -437,7 +454,7 @@ function draw() {
       cv.findContours(thresholded, contours, hierarchy, 3, 2, new cv.Point(0, 0));
     }
   }
-  */
+  /**/
 
 
   if (guiState.output.showVideo) {
@@ -446,7 +463,7 @@ function draw() {
     clear();
   }
 
-  /*
+  /**/
 
   if (contours && !showThresholded) {
     
@@ -465,6 +482,7 @@ function draw() {
       endShape(CLOSE);
 
       noFill();
+      strokeWeight(1);
       stroke(255, 255, 255)
       const box = cv.boundingRect(contour);
       rect(box.x, box.y, box.width, box.height);
@@ -477,7 +495,7 @@ function draw() {
     }
 
   }
-  */
+  /**/
   
 
   if (guiState.estimatePoseEnable && isModelReady) {
