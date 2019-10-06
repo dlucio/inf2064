@@ -14,7 +14,8 @@ let stats;
 let poses = [];
 let w = 1280;
 let h = 720;
-let fx, fy, fw, fh;
+
+const videoList = ['assets/u2_1280x720.mp4'];
 
 let isModelReady = false;
 
@@ -49,9 +50,10 @@ const config = {
 function setup() {
   createCanvas(w, h);
 
-  video = createVideo(['assets/frevo.mp4'], () => {
+  video = createVideo(videoList, () => {
     video.loop();
     video.volume(0);
+    // video.position(0,0);
   });
   // Hide the video element, and just show the canvas
   video.hide();
@@ -116,6 +118,7 @@ const guiState = {
     showBoundingBox: false,
   },
   estimatePoseEnable: true,
+  trackingEnable: false,
 };
 
 /**
@@ -136,18 +139,20 @@ function setupGui() {
       if (value) {
         poseNet.load().then( () => console.log("Model Reloaded after Estimate Enable.") );
       }
-    });
+    });  
 
   gui.add(guiState, 'source', ['video', 'webcam']).name('Source')
     .onChange( (value) => {
       video.stop();
-      video = null;      
+      video = null; 
+      clear();
       if (value === 'video') {
         w = 1280;
         h = 720;
-        video = createVideo(['assets/frevo.mp4'], () => {
+        video = createVideo(videoList, () => {
           video.loop();
           video.volume(0);
+          // video.position(0,0);
         });
         // video.size(width, height);
       } else {
@@ -326,12 +331,14 @@ function setupGui() {
   let Parameters = function() {
     this.blurRadius = 5.0;
     this.threshold = 127.5;
-    this.showThresholded = true;
+    this.showThresholded = false;
   };
 
   cvParams = new Parameters();
-  let cvFolder = gui.addFolder('OpenCV Tests');
+  let cvFolder = gui.addFolder('OpenCV (tests)');
   cvFolder.open();
+  cvFolder.add(guiState, 'trackingEnable').name('Tracking')
+    .onChange( value => video.play() );
   cvFolder.add(cvParams, 'blurRadius', 1.0, 10.0).step(0.1);
   cvFolder.add(cvParams, 'threshold', 0, 255).step(0.1);
   cvFolder.add(cvParams, 'showThresholded');
@@ -411,14 +418,23 @@ async function poseDetectionFrame() {
   }
 }
 
-
 function draw() {
   const showThresholded = cvParams.showThresholded;
   
   stats.begin();
+  
+  if (guiState.output.showVideo) {
+    image(video, 0, 0, width, width * video.height / video.width);
+  } else {
+    clear();
+  }
+
   /**/ 
-  if (cvReady()) {
-    video.loadPixels();
+  //FIXME: usar o loadPixels o tempo todo deixa o programa mais lento
+  //      infelizmente, ainda não consegui arrumar um jeito de desabilitar o loadPixels
+  //      depois que não é mais necessário modificar os pixels
+  video.loadPixels();
+  if (cvReady() && guiState.trackingEnable) {
     if (video.pixels.length > 0) {
       captureMat.data.set(video.pixels);
 
@@ -454,18 +470,8 @@ function draw() {
       cv.findContours(thresholded, contours, hierarchy, 3, 2, new cv.Point(0, 0));
     }
   }
-  /**/
 
-
-  if (guiState.output.showVideo) {
-    image(video, 0, 0, width, width * video.height / video.width);
-  } else {
-    clear();
-  }
-
-  /**/
-
-  if (contours && !showThresholded) {
+  if (contours && !showThresholded && guiState.trackingEnable) {
     
     noStroke();
     for (let i = 0; i < contours.size(); i++) {
@@ -505,7 +511,7 @@ function draw() {
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      poses.forEach(element => {
+      poses.forEach( (element, pid) => {
         const pose = element.pose;
 
         if (pose.score >= minPoseConfidence) {
@@ -516,7 +522,7 @@ function draw() {
             drawSkeleton(element.skeleton);
           }
           if (guiState.output.showBoundingBox) {
-            drawBoundingBox(element.boundingBox)
+            drawBoundingBox(element.boundingBox, pid)
           }
         }
         
@@ -537,7 +543,7 @@ function drawKeypoints(keypoints) {
     if (keypoint.score > minPartConfidence) {
       fill(255, 0, 0);
       noStroke();
-      const r=15;
+      const r=12;
       ellipse(keypoint.position.x, keypoint.position.y, r, r);
     }
   }
@@ -550,7 +556,7 @@ function drawSkeleton(skeleton) {
     let partA = skeleton[j][0];
     let partB = skeleton[j][1];
     stroke(255, 0, 0);
-    strokeWeight(4);
+    strokeWeight(3);
     line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
   }
 }
@@ -560,7 +566,10 @@ function drawSkeleton(skeleton) {
  * in an image, the bounding box will begin at the nose and extend to one of
  * ankles
  */
-function drawBoundingBox(boundingBox) {
+function drawBoundingBox(boundingBox, pid) {
+  fill(0,255,255);
+  textSize(20);
+  text(`Person ${pid}`, boundingBox.minX, boundingBox.minY);
   noFill();
   strokeWeight(4);
   stroke(255, 0, 255);
