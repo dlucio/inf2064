@@ -12,8 +12,9 @@ let video;
 let poseNet;
 let stats;
 let poses = [];
-let w = 640;
-let h = 480;
+let w = 1280;
+let h = 720;
+let fx, fy, fw, fh;
 
 let isModelReady = false;
 
@@ -48,10 +49,27 @@ const config = {
 function setup() {
   createCanvas(w, h);
 
-  video = createCapture(VIDEO);
-  video.size(width, height);
-  // video.showControls(); 
+  video = createVideo(['assets/frevo.mp4'], () => {
+    video.loop();
+    video.volume(0);
+  });
+  // Hide the video element, and just show the canvas
+  video.hide();
+  
+  setupPoseNet();
+  setupGui();
 
+  stats = new Stats();
+  stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+  document.body.appendChild( stats.dom );
+}
+
+
+function setupPoseNet() {
+  if (poseNet) {
+    poseNet.net.dispose();
+    poseNet = null;
+  }
   // Create a new poseNet method with a single detection
   poseNet = ml5.poseNet(video, config,  modelReady);
 
@@ -60,15 +78,6 @@ function setup() {
   poseNet.on('pose', function (results) {
     poses = results;
   });
-
-  // Hide the video element, and just show the canvas
-  video.hide();
-  
-  setupGui();
-
-  stats = new Stats();
-  stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.body.appendChild( stats.dom );
 }
 
 function modelReady() {
@@ -82,6 +91,7 @@ const tryResNetButtonText = '[New] Try ResNet50';
 
 const guiState = {
   algorithm: 'multi-pose',
+  source: 'video', // video or webcam
   input: {
     architecture: 'MobileNetV1',
     outputStride: defaultMobileNetStride,
@@ -128,6 +138,29 @@ function setupGui() {
       }
     });
 
+  gui.add(guiState, 'source', ['video', 'webcam']).name('Source')
+    .onChange( (value) => {
+      video.stop();
+      video = null;      
+      if (value === 'video') {
+        w = 1280;
+        h = 720;
+        video = createVideo(['assets/frevo.mp4'], () => {
+          video.loop();
+          video.volume(0);
+        });
+        // video.size(width, height);
+      } else {
+        w = 640;
+        h = 480;
+        video = createCapture(VIDEO);
+      }
+      resizeCanvas(w, h);
+      // Hide the video element, and just show the canvas
+      video.hide();
+      setupPoseNet();
+
+    });
   // The single-pose algorithm is faster and simpler but requires only one
   // person to be in the frame or results will be innaccurate. Multi-pose works
   // for more than 1 person
@@ -361,9 +394,6 @@ async function poseDetectionFrame() {
   }
 }
 
-function onResult(result) {
-  poses = result;
-}
 
 function draw() {
   const showThresholded = true;
@@ -411,7 +441,7 @@ function draw() {
 
 
   if (guiState.output.showVideo) {
-    image(video, 0, 0, width, height);
+    image(video, 0, 0, width, width * video.height / video.width);
   } else {
     clear();
   }
