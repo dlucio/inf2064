@@ -15,7 +15,9 @@ let poses = [];
 let w = 1280;
 let h = 720;
 
-const videoList = ['assets/u2_1280x720.mp4'];
+let videoList = ['assets/u2_1280x720.mp4'];
+// videoList = ['assets/frevo.mp4'];
+// videoList = ['assets/pomplamoose_1280x720.mp4'];
 
 let isModelReady = false;
 
@@ -37,9 +39,9 @@ const config = {
   imageScaleFactor: 0.3,
   outputStride: defaultMobileNetStride,
   flipHorizontal: false,
-  minConfidence: 0.25,
-  maxPoseDetections: 5,
-  scoreThreshold: 0.5,
+  minConfidence: 0.625,
+  maxPoseDetections: 10,
+  scoreThreshold: 0.65,
   nmsRadius: 20,
   detectionType: 'multiple',
   inputResolution: defaultMobileNetInputResolution, 
@@ -67,7 +69,16 @@ function setup() {
 }
 
 
+function keypointDist(p0, p1) {
+  let v0 = createVector(p0.x, p0.y, 0);
+  let v1 = createVector(p1.x, p1.y, 0);
+  return p5.Vector.dist(v0,v1);
+}
+let FRAME_N = 0;
+let ct;
 function setupPoseNet() {
+  ct = new CentroidTracker(180);
+
   if (poseNet) {
     poseNet.net.dispose();
     poseNet = null;
@@ -78,7 +89,24 @@ function setupPoseNet() {
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
   poseNet.on('pose', function (results) {
-    poses = results;
+    // console.log('FRAME,ct', FRAME_N, ct, results);
+    // if (FRAME_N == 200) {
+      // video.pause();
+      // return;
+    // }
+    // FRAME_N++;
+    
+    poses = [];
+    results.forEach( (person) => {
+      // console.log('score & confidence', person.pose.score, minPoseConfidence);
+      
+      if (person.pose.score >= minPoseConfidence) {
+        poses.push(person);
+      }
+    });
+    
+    // console.log(poses);
+
   });
 }
 
@@ -113,12 +141,12 @@ const guiState = {
   },
   output: {
     showVideo: true,
-    showSkeleton: true,
-    showPoints: true,
-    showBoundingBox: false,
+    showSkeleton: false,
+    showPoints: false,
+    showBoundingBox: true,
   },
   estimatePoseEnable: true,
-  trackingEnable: false,
+  trackingEnable: true,
 };
 
 /**
@@ -372,6 +400,8 @@ async function poseDetectionFrame() {
 
     guiState.architecture = guiState.changeToArchitecture;
     guiState.changeToArchitecture = null;
+
+    poses = [];
   }
 
   if (guiState.changeToMultiplier) {
@@ -380,6 +410,8 @@ async function poseDetectionFrame() {
     
     guiState.multiplier = +guiState.changeToMultiplier;
     guiState.changeToMultiplier = null;
+
+    poses = [];
   }
 
   if (guiState.changeToOutputStride) {
@@ -388,6 +420,8 @@ async function poseDetectionFrame() {
     
     guiState.outputStride = +guiState.changeToOutputStride;
     guiState.changeToOutputStride = null;
+
+    poses = [];
   }
 
   if (guiState.changeToInputResolution) {
@@ -396,6 +430,8 @@ async function poseDetectionFrame() {
     
     guiState.inputResolution = +guiState.changeToInputResolution;
     guiState.changeToInputResolution = null;
+
+    poses = [];
   }
 
   if (guiState.changeToQuantBytes) {
@@ -404,6 +440,8 @@ async function poseDetectionFrame() {
 
     guiState.quantBytes = guiState.changeToQuantBytes;
     guiState.changeToQuantBytes = null;
+
+    poses = [];
   }
 
   switch (guiState.algorithm) {
@@ -429,10 +467,10 @@ function draw() {
     clear();
   }
 
-  /**/ 
   //FIXME: usar o loadPixels o tempo todo deixa o programa mais lento
   //      infelizmente, ainda não consegui arrumar um jeito de desabilitar o loadPixels
   //      depois que não é mais necessário modificar os pixels
+  /**
   video.loadPixels();
   if (cvReady() && guiState.trackingEnable) {
     if (video.pixels.length > 0) {
@@ -502,6 +540,27 @@ function draw() {
 
   }
   /**/
+
+  if (guiState.trackingEnable) {
+
+    const objects = ct.update(poses);
+    const objectIDs = Object.keys(objects);
+    objectIDs.forEach(oid => {
+      const p = objects[oid];
+      const x = p[0];
+      const y = p[1];
+      
+      // fill(0,255,255);
+      // ellipse(x,y, 15);
+
+      fill(0,255,255);
+      textSize(20);
+      text(`Person ${oid}`, x+10, y-15);
+      noFill();
+      strokeWeight(1);
+      
+    });
+  }
   
 
   if (guiState.estimatePoseEnable && isModelReady) {
@@ -522,7 +581,7 @@ function draw() {
             drawSkeleton(element.skeleton);
           }
           if (guiState.output.showBoundingBox) {
-            drawBoundingBox(element.boundingBox, pid)
+            drawBoundingBox(element.boundingBox, element.id, pid)
           }
         }
         
@@ -566,17 +625,15 @@ function drawSkeleton(skeleton) {
  * in an image, the bounding box will begin at the nose and extend to one of
  * ankles
  */
-function drawBoundingBox(boundingBox, pid) {
+function drawBoundingBox(boundingBox, pid, index) {
   fill(0,255,255);
-  textSize(20);
-  text(`Person ${pid}`, boundingBox.minX, boundingBox.minY);
+  // textSize(20);
+  // text(`Person ${pid} [${index}]`, boundingBox.minX, boundingBox.minY);
+  // text(`Person ${pid}`, boundingBox.minX, boundingBox.minY);
   noFill();
-  strokeWeight(4);
+  strokeWeight(3);
   stroke(255, 0, 255);
   rect(
       boundingBox.minX, boundingBox.minY, boundingBox.maxX - boundingBox.minX,
       boundingBox.maxY - boundingBox.minY);
-
-  // ctx.strokeStyle = boundingBoxColor;
-  // ctx.stroke();
 }
