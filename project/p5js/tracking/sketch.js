@@ -50,7 +50,8 @@ const config = {
 }
 
 function setup() {
-  createCanvas(w, h);
+  let canvas = createCanvas(w, h);
+  canvas.parent('sketch-holder');
 
   video = createVideo(videoList, () => {
     video.loop();
@@ -114,6 +115,8 @@ function setupPoseNet() {
 
 function modelReady() {
   select('#status').html('Model Loaded');
+  select('#status').class('hidden');
+
   isModelReady = true;
   video.play();
   ct = new CentroidTracker(180);
@@ -163,7 +166,7 @@ function setupGui() {
   guiState[tryResNetButtonName] = function() {
     architectureController.setValue('ResNet50')
   };
-  gui.add(guiState, tryResNetButtonName).name(tryResNetButtonText);
+  // gui.add(guiState, tryResNetButtonName).name(tryResNetButtonText);
   gui.add(guiState, 'estimatePoseEnable')
     .name('Estimate Pose')
     .onChange( (value) => {
