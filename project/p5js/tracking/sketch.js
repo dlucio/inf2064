@@ -20,6 +20,7 @@ const videoSrc = {
   'video 1': ['assets/u2_1280x720.mp4'], 
   'video 2': ['assets/frevo.mp4'],
   'video 3': ['assets/pomplamoose_1280x720.mp4'],
+  'video 4': ['assets/soccer_video_1280x720.mp4'],
 }
 
 let isModelReady = false;
@@ -179,7 +180,7 @@ function setupGui() {
       }
     });  
 
-  gui.add(guiState, 'source', ['video 1', 'video 2', 'video 3', 'webcam']).name('Source')
+  gui.add(guiState, 'source', [...Object.keys(videoSrc), 'webcam']).name('Source')
     .onChange( (value) => {
       video.stop();
       video = null; 
@@ -460,6 +461,11 @@ async function poseDetectionFrame() {
     guiState.changeToQuantBytes = null;
 
     poses = [];
+  }
+
+  if (poses.length == 0) {
+    // reset Centroid Tracker
+    ct.dispose();
   }
 
   switch (guiState.algorithm) {
