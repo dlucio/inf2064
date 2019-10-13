@@ -17,7 +17,7 @@ let h = 720;
 
 let videoList = ['assets/u2_1280x720.mp4'];
 // videoList = ['assets/frevo.mp4'];
-// videoList = ['assets/pomplamoose_1280x720.mp4'];
+videoList = ['assets/pomplamoose_1280x720.mp4'];
 
 let isModelReady = false;
 
@@ -55,6 +55,7 @@ function setup() {
   video = createVideo(videoList, () => {
     video.loop();
     video.volume(0);
+    video.pause();
     // video.position(0,0);
   });
   // Hide the video element, and just show the canvas
@@ -75,9 +76,15 @@ function keypointDist(p0, p1) {
   return p5.Vector.dist(v0,v1);
 }
 let FRAME_N = 0;
-let ct;
+let ct = null;
 function setupPoseNet() {
-  ct = new CentroidTracker(180);
+  isModelReady = false;  
+  
+  if (ct != null) {
+    ct.dispose();
+    delete ct;
+    poses = [];
+  }
 
   if (poseNet) {
     poseNet.net.dispose();
@@ -113,6 +120,8 @@ function setupPoseNet() {
 function modelReady() {
   select('#status').html('Model Loaded');
   isModelReady = true;
+  video.play();
+  ct = new CentroidTracker(180);
 }
 
 
@@ -541,25 +550,32 @@ function draw() {
   }
   /**/
 
-  if (guiState.trackingEnable) {
+  if (guiState.trackingEnable && isModelReady && ct != null) {
 
-    const objects = ct.update(poses);
-    const objectIDs = Object.keys(objects);
-    objectIDs.forEach(oid => {
-      const p = objects[oid];
-      const x = p[0];
-      const y = p[1];
-      
-      // fill(0,255,255);
-      // ellipse(x,y, 15);
+    const ob = ct.update(poses);
+    if (typeof(ob) !== 'undefined') {
+      const objectsIDs = Object.keys(ob.objects);
+      objectsIDs.forEach(oid => {
+        const c = ob.objects[oid];
+        const x = c[0];
+        const y = c[1];
+        fill(0, 255, 255);
+        stroke(255, 0, 0);
+        strokeWeight(1);
+        ellipse(x, y, 10);
 
-      fill(0,255,255);
-      textSize(20);
-      text(`Person ${oid}`, x+10, y-15);
-      noFill();
-      strokeWeight(1);
-      
-    });
+        textSize(20);
+        text(`Person ${oid}`, x+10, y-10);
+      });
+
+      const bboxes = Object.values(ob.bboxes);
+      bboxes.forEach(bb => {
+        noFill();
+        stroke(0, 255, 0);
+        strokeWeight(2);
+        rect(bb.x0, bb.y0, bb.x1-bb.x0, bb.y1-bb.y0);
+      });
+    }
   }
   
 
@@ -589,7 +605,6 @@ function draw() {
         
     });
   }
-  
   stats.end();
 }
 

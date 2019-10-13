@@ -8,6 +8,7 @@ class CentroidTracker {
         // been marked as "disappeared", respectively
         this.nextObjectID = 0;
         this.objects = {};
+        this.bboxes = {};
         this.disappeared = {};
 
         // store the number of maximum consecutive frames a given
@@ -16,10 +17,11 @@ class CentroidTracker {
         this.maxDisappeared = maxDisappeared;
     }
 
-    register(centroid) {
+    register(centroid, bbox) {
         // when registering an object we use the next available object
         // ID to store the centroid
         this.objects[this.nextObjectID] = centroid;
+        this.bboxes[this.nextObjectID] = bbox;
         this.disappeared[this.nextObjectID] = 0;
         this.nextObjectID += 1;
     }
@@ -28,7 +30,19 @@ class CentroidTracker {
         // to deregister an object ID we delete the object ID from
         // both of our respective dictionaries
         delete this.objects[objectID];
+        delete this.bboxes[objectID];
         delete this.disappeared[objectID];
+    }
+
+    async dispose() {
+        this.nextObjectID = 0;
+        await this.asyncForEach(Object.keys(this.objects), async (objectID) => {
+            this.deregister(objectID);
+        })
+
+        // Object.keys(this.objects).forEach(objectID => {
+        //     this.deregister(objectID);
+        // });
     }
 
     update(poses) {
@@ -52,9 +66,11 @@ class CentroidTracker {
 
             // return early as there are no centroids or tracking info
             // to update
-            return this.objects
+            return {objects: this.objects, bboxes: this.bboxes};
         }
-        const inputCentroids = this.getCentroids(poses);
+        const centroidsBBoxes = this.getCentroidBBoxes(poses);
+        const inputCentroids = centroidsBBoxes.centroids;
+        const bboxes = centroidsBBoxes.bboxes;
 
         // if we are currently not tracking any objects take the input
         // centroids and register each of them
@@ -62,7 +78,8 @@ class CentroidTracker {
 
             for (let i = 0; i < inputCentroids.length; i++) {
                 const centroid = inputCentroids[i];
-                this.register(centroid);
+                const bbox = bboxes[i];
+                this.register(centroid, bbox);
                 poses[i].id = i;
             }
 
@@ -122,6 +139,7 @@ class CentroidTracker {
                 // counter
                 const objectID = objectIDs[row];
                 this.objects[objectID] = inputCentroids[col];
+                this.bboxes[objectID] = bboxes[col];
                 this.disappeared[objectID] = 0;
 
                 // indicate that we have examined each of the row and
@@ -164,10 +182,9 @@ class CentroidTracker {
                 // than the number of existing object centroids we need to
                 // register each new input centroid as a trackable object
                 unusedCols.forEach(col => {
-                    // console.log(this.nextObjectID, col);
                     poses[col].id = this.nextObjectID;
 
-                    this.register(inputCentroids[col]);
+                    this.register(inputCentroids[col], bboxes[col]);
 
                 });
             }
@@ -184,26 +201,41 @@ class CentroidTracker {
         }
 
         // return the set of trackable objects
-        return this.objects
+        return {objects: this.objects, bboxes: this.bboxes};
     }
 
-    getCentroids(arr) {
+    getCentroidBBoxes(arr, faceKP=true) {
         const centroids = [];
+        const bboxes = [];
         arr.forEach(person => {
             const nose = person.pose.keypoints[0].position;
             const leftEye = person.pose.keypoints[1].position;
             const rightEye = person.pose.keypoints[2].position;
+            const leftEar = person.pose.keypoints[3].position;
+            const rightEar = person.pose.keypoints[4].position;
 
-            const xs = [nose.x, leftEye.x, rightEye.x];
-            const ys = [nose.y, leftEye.y, rightEye.y];
+            const xs = [nose.x, leftEye.x, rightEye.x, leftEar.x, rightEar.x];
+            const ys = [nose.y, leftEye.y, rightEye.y, leftEar.y, rightEar.y];
 
             // bounding box from nose, left eye and right eye
-            const bb = {
-                x0: min(xs),
-                y0: min(ys),
-                x1: max(xs),
-                y1: max(ys)
-            };
+            let bb;
+            if (faceKP) {
+                bb = {
+                    x0: min(xs),
+                    y0: min(ys),
+                    x1: max(xs),
+                    y1: max(ys)
+                };
+
+            } else {
+
+                bb = {
+                    x0: person.boundingBox.minX,
+                    y0: person.boundingBox.minY,
+                    x1: person.boundingBox.maxX,
+                    y1: person.boundingBox.maxY
+                };
+            }
 
             // centroid
             const cx = (bb.x0 + bb.x1) / 2.0;
@@ -211,8 +243,9 @@ class CentroidTracker {
             const centroid = [cx, cy];
 
             centroids.push(centroid);
+            bboxes.push(bb);
         });
-        return centroids;
+        return {centroids: centroids, bboxes: bboxes};
     }
 
     dists(objects, inputs) {
@@ -304,6 +337,13 @@ class CentroidTracker {
     // https://stackoverflow.com/questions/8273047/javascript-function-similar-to-python-range
     range(n) {
         return [...Array(n).keys()];
+    }
+
+    //https://codeburst.io/javascript-async-await-with-foreach-b6ba62bbf404
+    async asyncForEach(array, callback) {
+        for (let index = 0; index < array.length; index++) {
+          await callback(array[index], index, array);
+        }
     }
 
 };
