@@ -391,9 +391,10 @@ function setupGui() {
 }
 
 let centroidTrackerParams;
+
 let captureMat, gray, blurred, thresholded;
 let contours, hierarchy;
-function centroidTrackerSetup() {
+function cvSetup() {
   captureMat = new cv.Mat(h, w, cv.CV_8UC4);
   gray = new cv.Mat(h, w, cv.CV_8UC1);
   blurred = new cv.Mat(h, w, cv.CV_8UC1);
@@ -404,7 +405,7 @@ let ready = false;
 function cvReady() {
   if (!cv || !cv.loaded) return false;
   if (ready) return true;
-  centroidTrackerSetup();
+  cvSetup();
   ready = true;
   return true;
 }
@@ -475,6 +476,10 @@ async function poseDetectionFrame() {
 
 function draw() {
   const showThresholded = false; //cvParams.showThresholded;
+
+  if (cvReady()) {
+    
+  }
   
   stats.begin();
   
@@ -568,24 +573,33 @@ function draw() {
         const x = c[0];
         const y = c[1];
 
-        fill(0, 255, 255);
-        stroke(255, 0, 0);
-        strokeWeight(1);
-        if (centroidTrackerParams.showCentroid) {
-          ellipse(x, y, 10);
+        if (ct.disappeared[oid] < 5) {
+
+          fill(0, 255, 255);
+          stroke(255, 0, 0);
+          strokeWeight(1);
+          if (centroidTrackerParams.showCentroid) {
+            ellipse(x, y, 10);
+          }
+  
+          textSize(20);
+          text(`Person ${oid}`, x+10, y-10);
+          
         }
 
-        textSize(20);
-        text(`Person ${oid}`, x+10, y-10);
       });
 
       if (centroidTrackerParams.showBoundingBox) {
-        const bboxes = Object.values(ob.bboxes);
-        bboxes.forEach(bb => {
-          noFill();
-          stroke(0, 255, 0);
-          strokeWeight(2);
-          rect(bb.x0, bb.y0, bb.x1-bb.x0, bb.y1-bb.y0);
+        const bboxesIDs = Object.keys(ob.bboxes);
+        bboxesIDs.forEach(bid => {
+          const bb = ob.bboxes[bid];
+
+          if (ct.disappeared[bid] < 5) {
+            noFill();
+            stroke(0, 255, 0);
+            strokeWeight(2);
+            rect(bb.x0, bb.y0, bb.x1-bb.x0, bb.y1-bb.y0);
+          }
         });
       }
     }
@@ -596,21 +610,21 @@ function draw() {
     
     poseDetectionFrame().then( () => {
     
-      // For each pose (i.e. person) detected in an image, loop through the poses
+      // For each person´s pose detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      poses.forEach( (element, pid) => {
-        const pose = element.pose;
+      poses.forEach( (person, pid) => {
+        const pose = person.pose;
 
         if (pose.score >= minPoseConfidence) {
           if (guiState.output.showPoints) {
             drawKeypoints(pose.keypoints);
           }
           if (guiState.output.showSkeleton) {
-            drawSkeleton(element.skeleton);
+            drawSkeleton(person.skeleton);
           }
           if (guiState.output.showBoundingBox) {
-            drawBoundingBox(element.boundingBox, element.id, pid)
+            drawBoundingBox(person.boundingBox, person.id, pid)
           }
         }
         
@@ -630,7 +644,7 @@ function drawKeypoints(keypoints) {
     if (keypoint.score > minPartConfidence) {
       fill(255, 0, 0);
       noStroke();
-      const r=12;
+      const r=9;
       ellipse(keypoint.position.x, keypoint.position.y, r, r);
     }
   }
@@ -657,7 +671,7 @@ function drawBoundingBox(boundingBox, pid, index) {
   fill(0,255,255);
   // textSize(20);
   // text(`Person ${pid} [${index}]`, boundingBox.minX, boundingBox.minY);
-  // text(`Person ${pid}`, boundingBox.minX, boundingBox.minY);
+  // text(` [ ${pid} ]`, boundingBox.minX-15, boundingBox.minY);
   noFill();
   strokeWeight(3);
   stroke(255, 0, 255);
