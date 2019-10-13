@@ -6,6 +6,7 @@
 /* ===
 ml5 Example
 PoseNet example using p5.js
+Modified by Dj Soul (dlucio@impa.br)
 === */
 
 let video;
@@ -15,9 +16,11 @@ let poses = [];
 let w = 1280;
 let h = 720;
 
-let videoList = ['assets/u2_1280x720.mp4'];
-// videoList = ['assets/frevo.mp4'];
-videoList = ['assets/pomplamoose_1280x720.mp4'];
+const videoSrc = { 
+  'video 1': ['assets/u2_1280x720.mp4'], 
+  'video 2': ['assets/frevo.mp4'],
+  'video 3': ['assets/pomplamoose_1280x720.mp4'],
+}
 
 let isModelReady = false;
 
@@ -53,7 +56,7 @@ function setup() {
   let canvas = createCanvas(w, h);
   canvas.parent('sketch-holder');
 
-  video = createVideo(videoList, () => {
+  video = createVideo(videoSrc['video 1'], () => {
     video.loop();
     video.volume(0);
     video.pause();
@@ -128,7 +131,7 @@ const tryResNetButtonText = '[New] Try ResNet50';
 
 const guiState = {
   algorithm: 'multi-pose',
-  source: 'video', // video or webcam
+  source: 'video 1', // video n or webcam
   input: {
     architecture: 'MobileNetV1',
     outputStride: defaultMobileNetStride,
@@ -176,25 +179,30 @@ function setupGui() {
       }
     });  
 
-  gui.add(guiState, 'source', ['video', 'webcam']).name('Source')
+  gui.add(guiState, 'source', ['video 1', 'video 2', 'video 3', 'webcam']).name('Source')
     .onChange( (value) => {
       video.stop();
       video = null; 
       clear();
-      if (value === 'video') {
+
+      if (value !== 'webcam') {
+        
         w = 1280;
         h = 720;
-        video = createVideo(videoList, () => {
+        video = createVideo(videoSrc[value], () => {
           video.loop();
           video.volume(0);
-          // video.position(0,0);
         });
         // video.size(width, height);
+
       } else {
+
         w = 640;
         h = 480;
         video = createCapture(VIDEO);
+
       }
+      
       resizeCanvas(w, h);
       // Hide the video element, and just show the canvas
       video.hide();
