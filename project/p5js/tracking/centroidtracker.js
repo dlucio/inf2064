@@ -45,7 +45,7 @@ class CentroidTracker {
         // });
     }
 
-    update(poses) {
+    update(poses, useAllKP=false) {
 
         // check to see if the list of input bounding box rectangles
         // is empty
@@ -68,7 +68,7 @@ class CentroidTracker {
             // to update
             return {objects: this.objects, bboxes: this.bboxes};
         }
-        const centroidsBBoxes = this.getCentroidBBoxes(poses);
+        const centroidsBBoxes = this.getCentroidBBoxes(poses, useAllKP);
         const inputCentroids = centroidsBBoxes.centroids;
         const bboxes = centroidsBBoxes.bboxes;
 
@@ -204,7 +204,7 @@ class CentroidTracker {
         return {objects: this.objects, bboxes: this.bboxes};
     }
 
-    getCentroidBBoxes(arr, faceKP=true) {
+    getCentroidBBoxes(arr, useAllKP=false) {
         const centroids = [];
         const bboxes = [];
         arr.forEach(person => {
@@ -219,21 +219,21 @@ class CentroidTracker {
 
             // bounding box from nose, left eye and right eye
             let bb;
-            if (faceKP) {
-                bb = {
-                    x0: min(xs),
-                    y0: min(ys),
-                    x1: max(xs),
-                    y1: max(ys)
-                };
-
-            } else {
-
+            if (useAllKP) {
                 bb = {
                     x0: person.boundingBox.minX,
                     y0: person.boundingBox.minY,
                     x1: person.boundingBox.maxX,
                     y1: person.boundingBox.maxY
+                };
+
+            } else {
+
+                bb = {
+                    x0: min(xs),
+                    y0: min(ys),
+                    x1: max(xs),
+                    y1: max(ys)
                 };
             }
 

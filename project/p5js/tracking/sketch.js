@@ -69,13 +69,8 @@ function setup() {
   document.body.appendChild( stats.dom );
 }
 
-
-function keypointDist(p0, p1) {
-  let v0 = createVector(p0.x, p0.y, 0);
-  let v1 = createVector(p1.x, p1.y, 0);
-  return p5.Vector.dist(v0,v1);
-}
 let FRAME_N = 0;
+
 let ct = null;
 function setupPoseNet() {
   isModelReady = false;  
@@ -365,27 +360,29 @@ function setupGui() {
 
 
   // OpenCV options - prepared to lucas-kanade
-  let Parameters = function() {
-    this.blurRadius = 5.0;
-    this.threshold = 127.5;
-    this.showThresholded = false;
+  class Parameters {
+    constructor() {
+      this.useAllKeypoints = false;
+      this.showBoundingBox = false;
+      this.showCentroid = false;
+    }
   };
 
-  cvParams = new Parameters();
-  let cvFolder = gui.addFolder('OpenCV (tests)');
-  cvFolder.open();
-  cvFolder.add(guiState, 'trackingEnable').name('Tracking')
+  centroidTrackerParams = new Parameters();
+  let ctFolder = gui.addFolder('Centroid Tracker Algorithm');
+  ctFolder.open();
+  ctFolder.add(guiState, 'trackingEnable').name('Tracking')
     .onChange( value => video.play() );
-  cvFolder.add(cvParams, 'blurRadius', 1.0, 10.0).step(0.1);
-  cvFolder.add(cvParams, 'threshold', 0, 255).step(0.1);
-  cvFolder.add(cvParams, 'showThresholded');
+  ctFolder.add(centroidTrackerParams, 'useAllKeypoints');
+  ctFolder.add(centroidTrackerParams, 'showCentroid');
+  ctFolder.add(centroidTrackerParams, 'showBoundingBox');
 
 }
 
-let cvParams;
+let centroidTrackerParams;
 let captureMat, gray, blurred, thresholded;
 let contours, hierarchy;
-function cvSetup() {
+function centroidTrackerSetup() {
   captureMat = new cv.Mat(h, w, cv.CV_8UC4);
   gray = new cv.Mat(h, w, cv.CV_8UC1);
   blurred = new cv.Mat(h, w, cv.CV_8UC1);
@@ -396,7 +393,7 @@ let ready = false;
 function cvReady() {
   if (!cv || !cv.loaded) return false;
   if (ready) return true;
-  cvSetup();
+  centroidTrackerSetup();
   ready = true;
   return true;
 }
@@ -466,7 +463,7 @@ async function poseDetectionFrame() {
 }
 
 function draw() {
-  const showThresholded = cvParams.showThresholded;
+  const showThresholded = false; //cvParams.showThresholded;
   
   stats.begin();
   
@@ -552,29 +549,34 @@ function draw() {
 
   if (guiState.trackingEnable && isModelReady && ct != null) {
 
-    const ob = ct.update(poses);
+    const ob = ct.update(poses, centroidTrackerParams.useAllKeypoints);
     if (typeof(ob) !== 'undefined') {
       const objectsIDs = Object.keys(ob.objects);
       objectsIDs.forEach(oid => {
         const c = ob.objects[oid];
         const x = c[0];
         const y = c[1];
+
         fill(0, 255, 255);
         stroke(255, 0, 0);
         strokeWeight(1);
-        ellipse(x, y, 10);
+        if (centroidTrackerParams.showCentroid) {
+          ellipse(x, y, 10);
+        }
 
         textSize(20);
         text(`Person ${oid}`, x+10, y-10);
       });
 
-      const bboxes = Object.values(ob.bboxes);
-      bboxes.forEach(bb => {
-        noFill();
-        stroke(0, 255, 0);
-        strokeWeight(2);
-        rect(bb.x0, bb.y0, bb.x1-bb.x0, bb.y1-bb.y0);
-      });
+      if (centroidTrackerParams.showBoundingBox) {
+        const bboxes = Object.values(ob.bboxes);
+        bboxes.forEach(bb => {
+          noFill();
+          stroke(0, 255, 0);
+          strokeWeight(2);
+          rect(bb.x0, bb.y0, bb.x1-bb.x0, bb.y1-bb.y0);
+        });
+      }
     }
   }
   
