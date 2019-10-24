@@ -13,8 +13,6 @@ let video;
 let poseNet;
 let stats;
 let poses = [];
-let w = 1280;
-let h = 720;
 
 const videoSrc = { 
   'video 1': ['assets/u2_640x360.mp4'], 
@@ -61,8 +59,8 @@ function setup() {
     video.volume(0);
     video.pause();
     video.showControls();
-    w = video.width;
-    h = video.height;
+    const w = video.width;
+    const h = video.height;
     let canvas = createCanvas(w, h);
     canvas.parent('sketch-holder');
   });
@@ -75,8 +73,6 @@ function setup() {
   stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.body.appendChild( stats.dom );
 }
-
-let FRAME_N = 0;
 
 let ct = null;
 function setupPoseNet() {
@@ -99,16 +95,15 @@ function setupPoseNet() {
   // with an array every time new poses are detected
   poseNet.on('pose', function (results) {
     poses = [];
-    results.forEach( (person) => {
+    results.forEach( (person, id) => {
       // console.log('score & confidence', person.pose.score, minPoseConfidence);
+      person.id = id;
       
       if (person.pose.score >= minPoseConfidence) {
         poses.push(person);
       }
     });
     
-    // console.log(poses);
-
   });
 }
 
@@ -146,6 +141,7 @@ const guiState = {
     nmsRadius: config.nmsRadius,
   },
   output: {
+    videoOpacity: 1.0,
     showVideo: true,
     showSkeleton: false,
     showPoints: false,
@@ -189,30 +185,24 @@ function setupGui() {
           video.volume(0);
           // video.position(0,0);
           video.showControls();
-          w = video.width;
-          h = video.height;
+          const w = video.width;
+          const h = video.height;
           resizeCanvas(w, h);
-          
-          console.log("Canvas Size", w,h);
           
         });
         video.parent( 'video-holder' );
 
       } else {
 
-        w = 640;
-        h = 480;
         video = createCapture(VIDEO, () => {
-          w = video.width;
-          h = video.height;
+          const w = video.width;
+          const h = video.height;
           resizeCanvas(w, h);
 
         });
 
       }
       
-      // Hide the video element, and just show the canvas
-      // video.hide();
       setupPoseNet();
 
     });
@@ -348,7 +338,8 @@ function setupGui() {
   multi.open();
 
   let output = gui.addFolder('Output');
-  output.add(guiState.output, 'showVideo');
+  output.add(guiState.output, 'videoOpacity', 0.0, 1.0);
+  // output.add(guiState.output, 'showVideo');
   output.add(guiState.output, 'showSkeleton');
   output.add(guiState.output, 'showPoints');
   output.add(guiState.output, 'showBoundingBox');
@@ -389,8 +380,7 @@ function setupGui() {
   centroidTrackerParams = new Parameters();
   let ctFolder = gui.addFolder('Centroid Tracker Algorithm');
   ctFolder.open();
-  ctFolder.add(guiState, 'trackingEnable').name('Tracking')
-    .onChange( value => video.play() );
+  ctFolder.add(guiState, 'trackingEnable').name('Tracking');
   ctFolder.add(centroidTrackerParams, 'useAllKeypoints');
   ctFolder.add(centroidTrackerParams, 'showCentroid');
   ctFolder.add(centroidTrackerParams, 'showBoundingBox');
@@ -402,10 +392,10 @@ let centroidTrackerParams;
 let captureMat, gray, blurred, thresholded;
 let contours, hierarchy;
 function cvSetup() {
-  captureMat = new cv.Mat(h, w, cv.CV_8UC4);
-  gray = new cv.Mat(h, w, cv.CV_8UC1);
-  blurred = new cv.Mat(h, w, cv.CV_8UC1);
-  thresholded = new cv.Mat(h, w, cv.CV_8UC1);
+  captureMat = new cv.Mat(height, width, cv.CV_8UC4);
+  gray = new cv.Mat(height, width, cv.CV_8UC1);
+  blurred = new cv.Mat(height, width, cv.CV_8UC1);
+  thresholded = new cv.Mat(height, width, cv.CV_8UC1);
 }
 
 let ready = false;
@@ -487,100 +477,24 @@ async function poseDetectionFrame() {
 }
 
 function draw() {
-  const showThresholded = false; //cvParams.showThresholded;
 
   if (cvReady()) {
-    
+    // TODO
   }
   
   stats.begin();
   
   clear();
-  if (!guiState.output.showVideo) {
+  video.style('opacity', guiState.output.videoOpacity);
+  // Used to Debug
+  // if (!guiState.output.showVideo) {
 
-    video.style('opacity', '0.3');
-    if (guiState.source === 'video 5') {
-      image(video, 0, 0, width, height);
-      // image(video, 0, 0, width, width * video.height / video.width);
-    } 
+  //   if (guiState.source === 'video 5') {
+  //     image(video, 0, 0, width, height);
+  //     // image(video, 0, 0, width, width * video.height / video.width);
+  //   } 
     
-  } else {
-    video.style('opacity', '1.0');
-  }
-
-  //FIXME: usar o loadPixels o tempo todo deixa o programa mais lento
-  //      infelizmente, ainda não consegui arrumar um jeito de desabilitar o loadPixels
-  //      depois que não é mais necessário modificar os pixels
-  /**
-  video.loadPixels();
-  if (cvReady() && guiState.trackingEnable) {
-    if (video.pixels.length > 0) {
-      captureMat.data.set(video.pixels);
-
-      const blurRadius = cvParams.blurRadius;
-      const threshold = cvParams.threshold;
-
-      cv.cvtColor(captureMat, gray, cv.COLOR_RGBA2GRAY, 0);
-      cv.blur(gray, blurred, new cv.Size(blurRadius, blurRadius), new cv.Point(-1, -1), cv.BORDER_DEFAULT);
-      cv.threshold(blurred, thresholded, threshold, 255, cv.THRESH_BINARY);
-
-      if (showThresholded) {
-        const src = thresholded.data;
-        let  dst = video.pixels;
-        const n = src.length;
-        let j = 0;
-        for (let i = 0; i < n; i++) {
-          dst[j++] = src[i];
-          dst[j++] = src[i];
-          dst[j++] = src[i];
-          dst[j++] = 255;
-        }
-        video.updatePixels();
-      }
-
-      if (contours) {
-        contours.delete();
-      }
-      if (hierarchy) {
-        hierarchy.delete();
-      }
-      contours = new cv.MatVector();
-      hierarchy = new cv.Mat();
-      cv.findContours(thresholded, contours, hierarchy, 3, 2, new cv.Point(0, 0));
-    }
-  }
-
-  if (contours && !showThresholded && guiState.trackingEnable) {
-    
-    noStroke();
-    for (let i = 0; i < contours.size(); i++) {
-      fill(0, 0, 255, 128);
-      let contour = contours.get(i);
-
-      beginShape();
-      let k = 0;
-      for (let j = 0; j < contour.total(); j++) {
-        const x = contour.data[k++];
-        const y = contour.data[k++];
-        vertex(x, y);
-      }
-      endShape(CLOSE);
-
-      noFill();
-      strokeWeight(1);
-      stroke(255, 255, 255)
-      const box = cv.boundingRect(contour);
-      rect(box.x, box.y, box.width, box.height);
-
-      // these aren't working right now:
-      // https://github.com/ucisysarch/opencvjs/issues/30
-      //            var minAreaRect = cv.minAreaRect(contour);
-      //            var minAreaEllipse = cv.ellipse1(contour);
-      //            var fitEllipse = cv.fitEllipse(contour);
-    }
-
-  }
-  /**/
+  // }
 
   if (guiState.trackingEnable && isModelReady && ct != null) {
 
@@ -632,7 +546,7 @@ function draw() {
       // For each person´s pose detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      poses.forEach( (person, pid) => {
+      poses.forEach( (person, index) => {
         const pose = person.pose;
 
         if (pose.score >= minPoseConfidence) {
@@ -643,7 +557,7 @@ function draw() {
             drawSkeleton(person.skeleton);
           }
           if (guiState.output.showBoundingBox) {
-            drawBoundingBox(person.boundingBox, person.id, pid)
+            drawBoundingBox(person.boundingBox, person.id, index)
           }
         }
         
@@ -688,9 +602,12 @@ function drawSkeleton(skeleton) {
  */
 function drawBoundingBox(boundingBox, pid, index) {
   fill(0,255,255);
-  // textSize(20);
-  // text(`Person ${pid} [${index}]`, boundingBox.minX, boundingBox.minY);
-  // text(` [ ${pid} ]`, boundingBox.minX-15, boundingBox.minY);
+
+  if (!guiState.trackingEnable) {
+    textSize(20);
+    text(`Person ${pid}`, boundingBox.minX, boundingBox.minY);
+    // text(` [ ${pid} ]`, boundingBox.minX-15, boundingBox.minY);
+  }
   noFill();
   strokeWeight(3);
   stroke(255, 0, 255);
