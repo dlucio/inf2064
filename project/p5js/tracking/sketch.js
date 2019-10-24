@@ -17,10 +17,11 @@ let w = 1280;
 let h = 720;
 
 const videoSrc = { 
-  'video 1': ['assets/u2_1280x720.mp4'], 
+  'video 1': ['assets/u2_640x360.mp4'], 
   'video 2': ['assets/frevo.mp4'],
   'video 3': ['assets/pomplamoose_1280x720.mp4'],
-  'video 4': ['assets/soccer_video_1280x720.mp4'],
+  'video 4': ['assets/dancing_1280x720.mp4'],
+  'video 5': ['assets/soccer_video_1280x720.mp4'],
 }
 
 let isModelReady = false;
@@ -54,18 +55,19 @@ const config = {
 }
 
 function setup() {
-  let canvas = createCanvas(w, h);
-  canvas.parent('sketch-holder');
-
+  
   video = createVideo(videoSrc['video 1'], () => {
     video.loop();
     video.volume(0);
     video.pause();
-    // video.position(0,0);
+    video.showControls();
+    w = video.width;
+    h = video.height;
+    let canvas = createCanvas(w, h);
+    canvas.parent('sketch-holder');
   });
-  // Hide the video element, and just show the canvas
-  video.hide();
-  
+  video.parent( 'video-holder' );
+
   setupPoseNet();
   setupGui();
 
@@ -96,13 +98,6 @@ function setupPoseNet() {
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
   poseNet.on('pose', function (results) {
-    // console.log('FRAME,ct', FRAME_N, ct, results);
-    // if (FRAME_N == 200) {
-      // video.pause();
-      // return;
-    // }
-    // FRAME_N++;
-    
     poses = [];
     results.forEach( (person) => {
       // console.log('score & confidence', person.pose.score, minPoseConfidence);
@@ -183,30 +178,41 @@ function setupGui() {
   gui.add(guiState, 'source', [...Object.keys(videoSrc), 'webcam']).name('Source')
     .onChange( (value) => {
       video.stop();
+      video.remove();
       video = null; 
       clear();
 
       if (value !== 'webcam') {
         
-        w = 1280;
-        h = 720;
         video = createVideo(videoSrc[value], () => {
           video.loop();
           video.volume(0);
+          // video.position(0,0);
+          video.showControls();
+          w = video.width;
+          h = video.height;
+          resizeCanvas(w, h);
+          
+          console.log("Canvas Size", w,h);
+          
         });
-        // video.size(width, height);
+        video.parent( 'video-holder' );
 
       } else {
 
         w = 640;
         h = 480;
-        video = createCapture(VIDEO);
+        video = createCapture(VIDEO, () => {
+          w = video.width;
+          h = video.height;
+          resizeCanvas(w, h);
+
+        });
 
       }
       
-      resizeCanvas(w, h);
       // Hide the video element, and just show the canvas
-      video.hide();
+      // video.hide();
       setupPoseNet();
 
     });
@@ -489,10 +495,17 @@ function draw() {
   
   stats.begin();
   
-  if (guiState.output.showVideo) {
-    image(video, 0, 0, width, width * video.height / video.width);
+  clear();
+  if (!guiState.output.showVideo) {
+
+    video.style('opacity', '0.3');
+    if (guiState.source === 'video 5') {
+      image(video, 0, 0, width, height);
+      // image(video, 0, 0, width, width * video.height / video.width);
+    } 
+    
   } else {
-    clear();
+    video.style('opacity', '1.0');
   }
 
   //FIXME: usar o loadPixels o tempo todo deixa o programa mais lento

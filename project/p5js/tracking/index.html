@@ -49,6 +49,26 @@
       opacity: 0;
       transition: visibility 0s 2s, opacity 2s linear;
     }
+
+    #container {
+      position: relative;
+    }
+
+    #video-holder,
+    #sketch-holder {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      /* top: 0;
+      left: 0; */
+      align-content: center;
+      text-align: center;
+    }
+
+    #sketch-holder {
+      pointer-events: none;
+      z-index: 1;
+    }
   </style>
   
 </head>
@@ -60,8 +80,12 @@
   <p id='status'>Loading model...</p>
   <p id='opencv_status' class="hidden">Loading OpenCV...</p>
 
-  <div id="sketch-holder">
-    <!-- Our sketch will go here! -->
+  <div id="container">
+      <!-- https://stackoverflow.com/questions/2941189/how-to-overlay-one-div-over-another-div -->
+    <div id='sketch-holder'></div>
+    <div id="video-holder">
+      <!-- Our sketch will go here! -->
+    </div>
   </div>
 
   <!-- <p>Detect connected bright regions in video.</p> -->
