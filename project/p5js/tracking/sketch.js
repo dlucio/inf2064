@@ -371,23 +371,31 @@ function setupGui() {
   // OpenCV options - prepared to lucas-kanade
   class Parameters {
     constructor() {
+      this.algorithm = 'Centroid';
       this.useAllKeypoints = false;
       this.showBoundingBox = false;
       this.showCentroid = false;
     }
   };
 
-  centroidTrackerParams = new Parameters();
-  let ctFolder = gui.addFolder('Centroid Tracker Algorithm');
-  ctFolder.open();
-  ctFolder.add(guiState, 'trackingEnable').name('Tracking');
-  ctFolder.add(centroidTrackerParams, 'useAllKeypoints');
-  ctFolder.add(centroidTrackerParams, 'showCentroid');
-  ctFolder.add(centroidTrackerParams, 'showBoundingBox');
+  trackingParams = new Parameters();
+  let trackingFolder = gui.addFolder('Tracking Algorithms');
+  trackingFolder.open();
+  trackingFolder.add(guiState, 'trackingEnable').name('Tracking');
+  trackingFolder.add(trackingParams, 'algorithm', ['Centroid', 'Meanshift', 'Camshift']).onChange( (value) => {
+    video.stop();
+    video.play();
+    // TODO: Alterar o setup para tratar os algoritmos
+    // ready = false;
+    // setupTrackingAlgorithm();
+  });
+  trackingFolder.add(trackingParams, 'useAllKeypoints');
+  trackingFolder.add(trackingParams, 'showCentroid');
+  trackingFolder.add(trackingParams, 'showBoundingBox');
 
 }
 
-let centroidTrackerParams;
+let trackingParams;
 
 let captureMat, gray, blurred, thresholded;
 let contours, hierarchy;
@@ -498,7 +506,8 @@ function draw() {
 
   if (guiState.trackingEnable && isModelReady && ct != null) {
 
-    const ob = ct.update(poses, centroidTrackerParams.useAllKeypoints);
+    const showUntil = 5;
+    const ob = ct.update(poses, trackingParams.useAllKeypoints);
     if (typeof(ob) !== 'undefined') {
       const objectsIDs = Object.keys(ob.objects);
       objectsIDs.forEach(oid => {
@@ -506,12 +515,12 @@ function draw() {
         const x = c[0];
         const y = c[1];
 
-        if (ct.disappeared[oid] < 5) {
+        if (ct.disappeared[oid] < showUntil) {
 
           fill(0, 255, 255);
           stroke(255, 0, 0);
           strokeWeight(1);
-          if (centroidTrackerParams.showCentroid) {
+          if (trackingParams.showCentroid) {
             ellipse(x, y, 10);
           }
   
@@ -522,12 +531,12 @@ function draw() {
 
       });
 
-      if (centroidTrackerParams.showBoundingBox) {
+      if (trackingParams.showBoundingBox) {
         const bboxesIDs = Object.keys(ob.bboxes);
         bboxesIDs.forEach(bid => {
           const bb = ob.bboxes[bid];
 
-          if (ct.disappeared[bid] < 5) {
+          if (ct.disappeared[bid] < showUntil) {
             noFill();
             stroke(0, 255, 0);
             strokeWeight(2);
