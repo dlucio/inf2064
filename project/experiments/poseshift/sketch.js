@@ -244,7 +244,6 @@ function setupPoseNet() {
 }
 
 
-
 function modelReady() {
   select('#status').html('Model Loaded');
   select('#status').class('hidden');
@@ -252,10 +251,8 @@ function modelReady() {
   isModelReady = true;
   video.play();
   console.log("model loaded");
-  
 
 }
-
 
 
 const tryResNetButtonName = 'tryResNetButton';
@@ -286,13 +283,13 @@ const guiState = {
     showVideo: true,
     showSkeleton: false,
     showPoints: false,
-    showBoundingBox: true,
+    showBoundingBox: false,
   },
   estimatePoseEnable: true,
   trackingEnable: true,
   tracking: {
     algorithm: 'Meanshift',
-    useAllKeypoints: false,
+    useAllKeypoints: true,
   },
 };
 
