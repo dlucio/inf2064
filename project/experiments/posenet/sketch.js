@@ -79,10 +79,13 @@ function setup() {
 function setupPoseNet() {
   isModelReady = false;  
   
+  delete poses;
+  poses = null;
   poses = [];
 
-  if (poseNet) {
+  if (poseNet != null) {
     poseNet.net.dispose();
+    delete poseNet;
     poseNet = null;
   }
   // Create a new poseNet method with a single detection
@@ -91,6 +94,7 @@ function setupPoseNet() {
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
   poseNet.on('pose', function (results) {
+    delete poses;
     poses = [];
     results.forEach( (person, id) => {
       // console.log('score & confidence', person.pose.score, minPoseConfidence);
