@@ -72,17 +72,19 @@ function setup() {
   stats = new Stats();
   stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.body.appendChild( stats.dom );
+
 }
 
-let ct = null;
+let centroidTracker = null;
 function setupPoseNet() {
   isModelReady = false;  
   
-  if (ct != null) {
-    ct.dispose();
-    delete ct;
-    poses = [];
+  if (centroidTracker != null) {
+    centroidTracker.dispose();
+    delete centroidTracker;
   }
+
+  poses = [];
 
   if (poseNet) {
     poseNet.net.dispose();
@@ -113,7 +115,7 @@ function modelReady() {
 
   isModelReady = true;
   video.play();
-  ct = new CentroidTracker(180);
+  centroidTracker = new CentroidTracker(180);
 }
 
 
@@ -183,14 +185,12 @@ function setupGui() {
         video = createVideo(videoSrc[value], () => {
           video.loop();
           video.volume(0);
-          // video.position(0,0);
           video.showControls();
           const w = video.width;
           const h = video.height;
           resizeCanvas(w, h);
           
         });
-        video.parent( 'video-holder' );
 
       } else {
 
@@ -200,8 +200,9 @@ function setupGui() {
           resizeCanvas(w, h);
 
         });
-
+        
       }
+      video.parent( 'video-holder' );
       
       setupPoseNet();
 
@@ -379,16 +380,9 @@ function setupGui() {
   };
 
   trackingParams = new Parameters();
-  let trackingFolder = gui.addFolder('Tracking Algorithms');
+  let trackingFolder = gui.addFolder('Centroid Tracking Algorithm');
   trackingFolder.open();
   trackingFolder.add(guiState, 'trackingEnable').name('Tracking');
-  trackingFolder.add(trackingParams, 'algorithm', ['Centroid', 'Meanshift', 'Camshift']).onChange( (value) => {
-    video.stop();
-    video.play();
-    // TODO: Alterar o setup para tratar os algoritmos
-    // ready = false;
-    // setupTrackingAlgorithm();
-  });
   trackingFolder.add(trackingParams, 'useAllKeypoints');
   trackingFolder.add(trackingParams, 'showCentroid');
   trackingFolder.add(trackingParams, 'showBoundingBox');
@@ -404,6 +398,7 @@ function cvSetup() {
   gray = new cv.Mat(height, width, cv.CV_8UC1);
   blurred = new cv.Mat(height, width, cv.CV_8UC1);
   thresholded = new cv.Mat(height, width, cv.CV_8UC1);
+
 }
 
 let ready = false;
@@ -469,7 +464,7 @@ async function poseDetectionFrame() {
 
   if (poses.length == 0) {
     // reset Centroid Tracker
-    ct.dispose();
+    centroidTracker.dispose();
   }
 
   switch (guiState.algorithm) {
@@ -485,10 +480,6 @@ async function poseDetectionFrame() {
 }
 
 function draw() {
-
-  if (cvReady()) {
-    // TODO
-  }
   
   stats.begin();
   
@@ -504,10 +495,10 @@ function draw() {
     
   // }
 
-  if (guiState.trackingEnable && isModelReady && ct != null) {
+  if (guiState.trackingEnable && isModelReady && centroidTracker != null) {
 
     const showUntil = 5;
-    const ob = ct.update(poses, trackingParams.useAllKeypoints);
+    const ob = centroidTracker.update(poses, trackingParams.useAllKeypoints);
     if (typeof(ob) !== 'undefined') {
       const objectsIDs = Object.keys(ob.objects);
       objectsIDs.forEach(oid => {
@@ -515,7 +506,7 @@ function draw() {
         const x = c[0];
         const y = c[1];
 
-        if (ct.disappeared[oid] < showUntil) {
+        if (centroidTracker.disappeared[oid] < showUntil) {
 
           fill(0, 255, 255);
           stroke(255, 0, 0);
@@ -536,7 +527,7 @@ function draw() {
         bboxesIDs.forEach(bid => {
           const bb = ob.bboxes[bid];
 
-          if (ct.disappeared[bid] < showUntil) {
+          if (centroidTracker.disappeared[bid] < showUntil) {
             noFill();
             stroke(0, 255, 0);
             strokeWeight(2);
