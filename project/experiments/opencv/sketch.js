@@ -43,21 +43,25 @@ function setup() {
 }
 
 
-let dst;
-let hsvVec;
-let roiHist;
-let hsv;
-let frame;
-let trackWindow;
-let mask;
-let lowScalar;
-let highScalar;
-let low;
-let right;
-let hsvRoiVec;
-let termCrit;
-let trackBox;
+let dst = null;
+let roiHist = null;
+let hsv = null;
+let frame = null;
+let trackWindow = null;
+let termCrit = null;
+let trackBox = null;
 function setupTrackingAlgorithm() {
+
+  ready = false;
+  
+  if (dst != null) dst.delete();
+  if (roiHist !== null) roiHist.delete();
+  if (hsv != null) hsv.delete();
+  if (frame != null) frame.delete();
+  if (trackWindow != null) trackWindow = null;
+  if (termCrit != null) null;
+  if (trackBox != null) null;
+
   console.log('[setupTrackingAlgorithm] video.time', video.time());
   
   video.loadPixels();
@@ -84,18 +88,18 @@ function setupTrackingAlgorithm() {
   }
 
   // set up the ROI for tracking
-  roi = frame.roi(trackWindow);
-  hsvRoi = new cv.Mat();
+  const roi = frame.roi(trackWindow);
+  const hsvRoi = new cv.Mat();
   cv.cvtColor(roi, hsvRoi, cv.COLOR_RGBA2RGB);
   cv.cvtColor(hsvRoi, hsvRoi, cv.COLOR_RGB2HSV);
-  mask = new cv.Mat();
-  lowScalar = new cv.Scalar(30, 30, 0);
-  highScalar = new cv.Scalar(180, 180, 180);
-  low = new cv.Mat(hsvRoi.rows, hsvRoi.cols, hsvRoi.type(), lowScalar);
-  high = new cv.Mat(hsvRoi.rows, hsvRoi.cols, hsvRoi.type(), highScalar);
+  const mask = new cv.Mat();
+  const lowScalar = new cv.Scalar(30, 30, 0);
+  const highScalar = new cv.Scalar(180, 180, 180);
+  const low = new cv.Mat(hsvRoi.rows, hsvRoi.cols, hsvRoi.type(), lowScalar);
+  const high = new cv.Mat(hsvRoi.rows, hsvRoi.cols, hsvRoi.type(), highScalar);
   cv.inRange(hsvRoi, low, high, mask);
   roiHist = new cv.Mat();
-  hsvRoiVec = new cv.MatVector();
+  const hsvRoiVec = new cv.MatVector();
   hsvRoiVec.push_back(hsvRoi);
   cv.calcHist(hsvRoiVec, [0], mask, roiHist, [180], [0, 180]);
   cv.normalize(roiHist, roiHist, 0, 255, cv.NORM_MINMAX);
@@ -177,7 +181,7 @@ function draw() {
   // image(video, 0, 0, width, height);
 
   if (video.pixels.length > 0) {
-    if (cvReady() && true) {
+    if (cvReady()) {
 
       try {
 
@@ -219,7 +223,8 @@ function draw() {
         }
         
       } catch (err) {
-        utils.printError(err);
+        console.error(err);
+        
       }
 
     }
