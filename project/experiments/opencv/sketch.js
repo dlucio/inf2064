@@ -22,41 +22,24 @@ function setup() {
   canvas = createCanvas(w, h);
   canvas.parent('sketch-holder');
 
-  // video = createCapture(VIDEO);
   video = createVideo(['assets/cup.mp4'], () => {
     video.noLoop();
     video.volume(0);
     video.showControls();
     video.play();
-    // video.pause();
   });
   video.parent( 'video-holder' );
   video.size(width, height);
   video.onended( (elm) => {
     video.play();
-    ready = false;
-    setupTrackingAlgorithm();
+    // ready = false;
+    // setupTrackingAlgorithm();
   });
-
-  // Create a new poseNet method with a single detection
-  // poseNet = ml5.poseNet(video, modelReady);
-  // This sets up an event that fills the global variable "poses"
-  // with an array every time new poses are detected
-  // poseNet.on('pose', function (results) {
-  //   poses = results;
-  // });
-  // Hide the video element, and just show the canvas
-  // video.hide();
 
   setupGui();
   stats = new Stats();
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.body.appendChild(stats.dom);
-}
-
-function modelReady() {
-
-  select('#status').html('Model Loaded');
 }
 
 
@@ -151,17 +134,7 @@ function setupGui() {
     ready = false;
     setupTrackingAlgorithm(); 
   });
-  gui.add(params, 'source', ['video', 'webcam']).onChange( (value) => {
-    video.stop();
-    video.play();
-    ready = false;
-    setupTrackingAlgorithm();
-    if (value == 'video') {
-      //TODO
-    } else {
-      //TODO
-    }
-  });
+  
   gui.add(params, 'resolution', ['320x240', '640x480']).onChange( (value) => {
     if (value == '320x240') {
       w = 320;
@@ -185,8 +158,6 @@ function setupGui() {
       stroke(255);
     }
   });
-  gui.add(params, 'drawKeypoints');
-  gui.add(params, 'drawSkeleton');
 }
 
 let ready = false;
@@ -209,12 +180,6 @@ function draw() {
     if (cvReady() && true) {
 
       try {
-
-        // if (!streaming) {
-        //   // clean and stop.
-        //   frame.delete(); dst.delete(); hsvVec.delete(); roiHist.delete(); hsv.delete();
-        //   return;
-        // }
 
         // start processing.
         frame.data.set(video.pixels);
@@ -243,10 +208,6 @@ function draw() {
 
           // Draw it on image
           let pts = cv.rotatedRectPoints(trackBox);
-          // cv.line(frame, pts[0], pts[1], [255, 0, 0, 255], 3);
-          // cv.line(frame, pts[1], pts[2], [255, 0, 0, 255], 3);
-          // cv.line(frame, pts[2], pts[3], [255, 0, 0, 255], 3);
-          // cv.line(frame, pts[3], pts[0], [255, 0, 0, 255], 3);
 
           noFill();
           stroke(0, 0, 255);
@@ -257,18 +218,6 @@ function draw() {
           line(pts[3].x, pts[3].y, pts[0].x, pts[0].y);
         }
         
-        if (false) {
-          const _src = frame.data;
-          let _dst = video.pixels;
-          for (let i = 0; i < _src.length; i+=4) {
-            _dst[i+0] = _src[i+0];
-            _dst[i+1] = _src[i+1];
-            _dst[i+2] = 0; //_src[i+2];
-            _dst[i+3] = 255;
-          }
-        }
-
-
       } catch (err) {
         utils.printError(err);
       }
@@ -276,49 +225,6 @@ function draw() {
     }
   }
   video.updatePixels();
-  
-  // We can call both functions to draw all keypoints and the skeletons
-  if (params.drawKeypoints) {
-    drawKeypoints();
-  }
-
-  if (params.drawSkeleton) {
-    drawSkeleton();
-  }
 
   stats.end();
-}
-
-// A function to draw ellipses over the detected keypoints
-function drawKeypoints() {
-  // Loop through all the poses detected
-  for (let i = 0; i < poses.length; i++) {
-    // For each pose detected, loop through all the keypoints
-    let pose = poses[i].pose;
-    for (let j = 0; j < pose.keypoints.length; j++) {
-      // A keypoint is an object describing a body part (like rightArm or leftShoulder)
-      let keypoint = pose.keypoints[j];
-      // Only draw an ellipse is the pose probability is bigger than 0.2
-      if (keypoint.score > 0.2) {
-        fill(255, 0, 0);
-        noStroke();
-        ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
-      }
-    }
-  }
-}
-
-// A function to draw the skeletons
-function drawSkeleton() {
-  // Loop through all the skeletons detected
-  for (let i = 0; i < poses.length; i++) {
-    let skeleton = poses[i].skeleton;
-    // For every skeleton, loop through all body connections
-    for (let j = 0; j < skeleton.length; j++) {
-      let partA = skeleton[j][0];
-      let partB = skeleton[j][1];
-      stroke(255, 0, 0);
-      line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
-    }
-  }
 }
