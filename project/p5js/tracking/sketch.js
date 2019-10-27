@@ -16,10 +16,10 @@ let poses = [];
 
 const videoSrc = { 
   'video 1': ['assets/u2_640x360.mp4'], 
-  'video 2': ['assets/frevo.mp4'],
-  'video 3': ['assets/pomplamoose_1280x720.mp4'],
-  'video 4': ['assets/dancing_1280x720.mp4'],
-  'video 5': ['assets/soccer_video_1280x720.mp4'],
+  'video 2': ['assets/frevo_640x360.mp4'],
+  'video 3': ['assets/pomplamoose_640x360.mp4'],
+  'video 4': ['assets/dancing_640x360.mp4'],
+  'video 5': ['assets/soccer_video_640x360.mp4'],
 }
 
 let isModelReady = false;
