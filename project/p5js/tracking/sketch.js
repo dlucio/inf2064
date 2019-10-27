@@ -197,7 +197,11 @@ function setupGui() {
         video = createCapture(VIDEO, () => {
           const w = video.width;
           const h = video.height;
-          resizeCanvas(w, h);
+          console.log('Why WxH =', w,h);
+          
+          // NOTE: hardcode canvas size for my camera
+          // I don't know why video withxheight == 300x150;
+          resizeCanvas(640, 480);
 
         });
         
@@ -372,7 +376,6 @@ function setupGui() {
   // OpenCV options - prepared to lucas-kanade
   class Parameters {
     constructor() {
-      this.algorithm = 'Centroid';
       this.useAllKeypoints = false;
       this.showBoundingBox = false;
       this.showCentroid = false;
@@ -391,24 +394,6 @@ function setupGui() {
 
 let trackingParams;
 
-let captureMat, gray, blurred, thresholded;
-let contours, hierarchy;
-function cvSetup() {
-  captureMat = new cv.Mat(height, width, cv.CV_8UC4);
-  gray = new cv.Mat(height, width, cv.CV_8UC1);
-  blurred = new cv.Mat(height, width, cv.CV_8UC1);
-  thresholded = new cv.Mat(height, width, cv.CV_8UC1);
-
-}
-
-let ready = false;
-function cvReady() {
-  if (!cv || !cv.loaded) return false;
-  if (ready) return true;
-  cvSetup();
-  ready = true;
-  return true;
-}
 
 
 async function poseDetectionFrame() {
