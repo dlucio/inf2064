@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>PoseNet + Tracking</title>
+  <title>PoseNet + Centroid Tracking</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js"></script>
@@ -73,11 +73,11 @@
 </head>
 
 <body>
-  <h1 class="title"> PoseNet + Tracking </h1>
-  <h2 class="title"> Projeto INF2064 2019.2</h2>
+  <h1 class="title"> PoseNet + Centroid Tracking </h1>
+  <!-- <h2 class="title"> Projeto INF2064 2019.2</h2> -->
   
   <p id='status'>Loading model...</p>
-  <p id='opencv_status' class="hidden">Loading OpenCV...</p>
+  <!-- <p id='opencv_status' class="hidden">Loading OpenCV...</p> -->
 
   <div id="container">
       <!-- https://stackoverflow.com/questions/2941189/how-to-overlay-one-div-over-another-div -->
@@ -108,7 +108,7 @@
         }
     };
   </script>
-  <script async src="../common/opencv.js"></script>
+  <!-- <script async src="../common/opencv.js"></script> -->
   <script src="../common/dat.gui.js"></script>
   <script src="../common/stats.js"></script>
   <script src="centroidtracker.js"></script>

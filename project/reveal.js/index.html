@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/monokai.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h2>Pose Tracking</h2>
+					<p>Djalma Lúcio</p>
+					<p> 
+						<small>INF2064 (2019.2)</small>
+						<!-- <small>Professor Marcelo Gattass</small> -->
+					</p>
+				</section>
+
+				<section>
+					<h4>Objetivo</h4>
+					<p style="text-align: justify;">
+						O objetivo do projeto é realizar o rastreamento e a 
+						identificação da pose de diversas pessoas em tempo real no navegador. 
+					</p>					
+				</section>
+
+				<section>
+					<h4>Arquitetura</h4>
+					<section>
+						<ul>
+							<li>PoseNet</li>
+							<li>p5.js</li>
+							<li>ml5.js</li>
+							<li>OpenCV.js</li>
+						</ul>
+					</section>
+				</section>
+
+				<section>
+					<h4>Experimentos</h4>
+					<section>
+						<p style="text-align: justify;">
+							Para um melhor entendimento das bibliotecas utilizadas no projeto, 
+							foram realizados os seguintes experimentos:
+							<ul>
+								<li>OpenCV</li>
+								<li>PoseNet</li>
+								<li>PoseShift</li>
+							</ul>
+						</p>
+					</section>
+					<section>
+						<h4><a href="../experiments/opencv/" target="_blank">OpenCV</a></h4>
+						<p style="text-align: justify;">
+							O experimento <a href="../experiments/opencv/" target="_blank">OpenCV</a> utiliza 
+							os algoritmos de rastreamento Meanshift e Camshift fornecidos pela biblioteca <em>OpenCV.js</em>
+						</p>
+					</section>
+					<section>
+						<h4><a href="../experiments/posenet/" target="_blank">PoseNet</a></h4>
+						<p style="text-align: justify;">
+							O experimento <a href="../experiments/posenet/" target="_blank">PoseNet</a> permite 
+							que sejam testados os diversos parâmentros utilizados pelo modelo PoseNet disponibilizado
+							pela biblioteca <em>ml5.js</em>
+						</p>
+					</section>
+					<section>
+						<h4><a href="../experiments/poseshift/" target="_blank">PoseShift</a></h4>
+						<p style="text-align: justify;">
+							O experimento <a href="../experiments/poseshift/" target="_blank">PoseShift</a>
+							é a integração entre os experimentos OpenCV e PoseNet.
+						</p>
+					</section>
+				</section>
+				
+				<section>
+					<h4>
+						<a href="../posetracking/" target="_blank">Pose Tracking</a>
+					</h4>
+					<p style="text-align: justify;">
+						No projeto <a href="../posetracking/" target="_blank">Pose Tracking</a>  
+						é utilizado o modelo <u>PoseNet</u> para detectar a pose das diversas pessoas, 
+						e para o rastreamento e identificação de cada pose detectada é utilizado o 
+						algoritmo <u>Centroid Tracking</u>. 
+					</p>
+				</section>
+
+				<section>
+					<h4>Contribuições</h4>
+					<ul style="font-size: 0.8em;">
+						<li>Removido memory leak do ml5.PoseNet</li>
+						<li>Adicionada bounding box ao ml5.PoseNet</li>
+						<li>Primeiro exemplo utilizando ml5.PoseNet, OpenCV.js e p5js</li>
+						<li>Corrigido os valores dos parâmetros de incialização do ml5.PoseNet.
+							<ul>
+								<li><em>Na documentação informava alguns valores mas no código os valores dos parâmentros eram outros</em></li> 							
+							</ul>
+						</li>
+						<li>Adicionada a opção de habilitar e desabilitar a inferência no ml5.PoseNet.
+							<ul>
+								<li><em>Isso é útil quando é usada a interface de eventos para receber as poses detectadas.</em></li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+
+				<section>
+					<h4>Trabalhos futuros</h4>
+					<ul>
+						<li>Utilizar o algoritmo Lucas-Kanade para fazer o tracking dos keypoints</li>
+					</ul>
+				</section>
+			</div>
+		</div>
+
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
