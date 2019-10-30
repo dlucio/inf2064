@@ -16,7 +16,6 @@ let poses = [];
 let interval;
 
 const videoSrc = { 
-  'video 0': ['../lucas-kanade/assets/box.mp4'], 
   'video 1': ['../../assets/u2_640x360.mp4'], 
   'video 2': ['../../assets/frevo_640x360.mp4'],
   'video 3': ['../../assets/pomplamoose_640x360.mp4'],
@@ -57,15 +56,25 @@ const config = {
 
 
 function setup() {
-  video = createVideo(videoSrc['video 1'], () => {
-    video.loop();
-    video.volume(0);
-    video.pause();
-    video.showControls();
-    const w = video.width;
-    const h = video.height;
-    let canvas = createCanvas(w, h);
+  // video = createVideo(videoSrc['video 1'], () => {
+  //   video.loop();
+  //   video.volume(0);
+  //   video.pause();
+  //   video.showControls();
+  //   const w = video.width;
+  //   const h = video.height;
+  //   let canvas = createCanvas(w, h);
+  //   canvas.parent('sketch-holder');
+  // });
+  
+  video = createCapture(VIDEO, () => {
+    // NOTE: hardcode canvas size for my camera
+    // I don't know why video withxheight == 300x150;
+    let canvas = createCanvas(640, 480);
     canvas.parent('sketch-holder');
+    console.log('video size', video.width, video.height);
+    
+    
   });
   video.parent( 'video-holder' );
 
@@ -145,21 +154,6 @@ function setupTrackingAlgorithm() {
     p0.data32F[i*2+1] = Math.min(y, height);
     
   });
-  console.log(poses);
-  
-  // console.log(points);
-  // p0 = new cv.matFromArray(points.length, 1, cv.CV_16U, points)
-  // console.log('p0', p0.rows, p0.cols, p0);
-  // p0.delete(); //none.delete();
-  
-  
-  // none = new cv.Mat();
-  // p0 = new cv.Mat();
-  // cv.goodFeaturesToTrack(oldGray, p0, maxCorners, qualityLevel, minDistance, none, blockSize);
-  // console.log(p0.rows, p0.cols, p0.size(), p0.type());
-  
-
-  
 
   frame = new cv.Mat(video.height, video.width, cv.CV_8UC4);
   frameGray = new cv.Mat();
@@ -168,8 +162,6 @@ function setupTrackingAlgorithm() {
   err = new cv.Mat();
 
 }
-
-
 
 let ready = false;
 function cvReady() {
@@ -237,7 +229,7 @@ const tryResNetButtonText = '[New] Try ResNet50';
 
 const guiState = {
   algorithm: 'multi-pose',
-  source: 'video 0', // video n or webcam
+  source: 'webcam', // video n or webcam
   input: {
     architecture: 'MobileNetV1',
     outputStride: defaultMobileNetStride,
