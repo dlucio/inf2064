@@ -13,7 +13,7 @@ let video;
 let stats;
 let w = 640;
 let h = 480;
-const trackStartTime = 0.001;
+const trackStartTime = 0.009;
 
 
 function setup() {
@@ -30,7 +30,7 @@ function setup() {
   video.size(width, height);
   video.onended( (elm) => {
     video.play();
-    // ready = false;
+    ready = false;
     // setupTrackingAlgorithm();
   });
 

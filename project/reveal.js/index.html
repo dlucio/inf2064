@@ -61,17 +61,27 @@
 							Para um melhor entendimento das bibliotecas utilizadas no projeto, 
 							foram realizados os seguintes experimentos:
 							<ul>
-								<li>OpenCV</li>
+								<li>OpenCV: Meanshift & Camshift</li>
+								<li>OpenCV: Lucas-Kanade Optical Flow</li>
 								<li>PoseNet</li>
 								<li>PoseShift</li>
+								<li>PoseFlow</li>
 							</ul>
 						</p>
 					</section>
 					<section>
-						<h4><a href="../experiments/opencv/" target="_blank">OpenCV</a></h4>
+						<h4><a href="../experiments/opencv/" target="_blank">OpenCV: Meanshift & Camshift</a></h4>
 						<p style="text-align: justify;">
-							O experimento <a href="../experiments/opencv/" target="_blank">OpenCV</a> utiliza 
+							O experimento <a href="../experiments/opencv/" target="_blank">OpenCV: Meanshift & Camshift</a> utiliza 
 							os algoritmos de rastreamento Meanshift e Camshift fornecidos pela biblioteca <em>OpenCV.js</em>
+						</p>
+					</section>
+					<section>
+						<h4><a href="../experiments/lucas-kanade/" target="_blank">OpenCV: Lucas-Kanade Optical Flow</a></h4>
+						<p style="text-align: justify;">
+							O experimento <a href="../experiments/lucas-kanade/" target="_blank">OpenCV: Lucas-Kanade Optical Flow</a> 
+							para realizar o rastreamento utiliza sparse optical flow através do método Lucas-Kanade 
+							fornecido pela biblioteca <em>OpenCV.js</em>
 						</p>
 					</section>
 					<section>
@@ -86,9 +96,16 @@
 						<h4><a href="../experiments/poseshift/" target="_blank">PoseShift</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/poseshift/" target="_blank">PoseShift</a>
-							é a integração entre os experimentos OpenCV e PoseNet.
+							é a integração entre os experimentos OpenCV: Meanshift & Camshift e PoseNet.
 						</p>
 					</section>
+					<section>
+						<h4><a href="../experiments/poseflow/" target="_blank">PoseFlow</a></h4>
+						<p style="text-align: justify;">
+							O experimento <a href="../experiments/poseflow/" target="_blank">PoseFlow</a>
+							é a integração entre os experimentos OpenCV: Lucas-Kanade Optical Flow e PoseNet.
+						</p>
+					</section>					
 				</section>
 				
 				<section>
@@ -125,8 +142,13 @@
 				<section>
 					<h4>Trabalhos futuros</h4>
 					<ul>
-						<li>Utilizar o algoritmo Lucas-Kanade para fazer o tracking dos keypoints</li>
+						<li>Utilizar o algoritmo Lucas-Kanade para fazer o tracking dos keypoints de diversas pessoas</li>
+						<li>Utilizar o filtro de Kalman para dar mais estabilidade ao rastreamento</li>
 					</ul>
+				</section>
+				
+				<section>
+					<h4>Conclusão</h4>
 				</section>
 			</div>
 		</div>
