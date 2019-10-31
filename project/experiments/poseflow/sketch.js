@@ -103,7 +103,9 @@ let none = null;
 const trackStartTime = 0.001;
 function setupTrackingAlgorithm() {
 
-  ready = false;
+  if (poses.length < 1) {
+    return false;
+  }
 
   if (winSize !== null) { delete winSize; winSize = null; }
   if (criteria !== null) { delete criteria; criteria = null; }
@@ -148,16 +150,23 @@ function setupTrackingAlgorithm() {
   cv.cvtColor(oldFrame, oldGray, cv.COLOR_RGB2GRAY);
   
   
-  // 17 = number of keypoints
-  p0 = new cv.Mat(17, 1, cv.CV_32FC2);
   const person = poses[0];
+  const points = [];
   person.pose.keypoints.forEach((keypoint,i) => {
-    const x = keypoint.position.x;
-    const y = keypoint.position.y;
-    p0.data32F[i*2+0] = Math.min(x, width);
-    p0.data32F[i*2+1] = Math.min(y, height);
-    
+    if (keypoint.score > minPartConfidence) {
+      const x = Math.min(keypoint.position.x, width);
+      const y = Math.min(keypoint.position.y, height);
+      points.push( {x:x, y:y} );
+    }
   });
+  
+  p0 = new cv.Mat(points.length, 1, cv.CV_32FC2);
+  for (let i = 0; i < points.length; i++) {
+    const p = points[i];
+    
+    p0.data32F[i*2+0] = p.x;
+    p0.data32F[i*2+1] = p.y;
+  }
 
   frame = new cv.Mat(video.height, video.width, cv.CV_8UC4);
   frameGray = new cv.Mat();
@@ -165,6 +174,7 @@ function setupTrackingAlgorithm() {
   st = new cv.Mat();
   err = new cv.Mat();
 
+  return true;
 }
 
 let ready = false;
@@ -178,8 +188,8 @@ function cvReady() {
   if (!cv || !cv.loaded || !inputLoaded) return false;
   if (ready) return true;
   setupTrackingAlgorithm();
-  ready = true;
-  return true;
+  ready = setupTrackingAlgorithm();
+  return ready;
 }
 
 
@@ -494,7 +504,7 @@ function setupGui() {
 
   let tracking = gui.addFolder('Tracking');
   tracking.add(guiState.tracking, 'useInterval')
-    .onChange( () => {
+    .onChange( (value) => {
 
       if (typeof(interval) !== 'undefined') {
         clearInterval(interval);
@@ -502,11 +512,17 @@ function setupGui() {
                   
       }
 
-      interval = setInterval( () => {
-        if (guiState.tracking.useInterval) {
-          ready = false;
-        }
-      }, guiState.tracking.interval*1000);
+      if (value) {
+        
+        interval = setInterval( () => {
+          if (guiState.tracking.useInterval) {
+            isModelReady = false;
+            setupTrackingAlgorithm();
+            isModelReady = true;
+          } 
+        }, guiState.tracking.interval*1000);
+
+      }
       
     });
 
