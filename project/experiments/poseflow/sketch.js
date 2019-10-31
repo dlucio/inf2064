@@ -122,9 +122,13 @@ function setupTrackingAlgorithm() {
   let [maxCorners, qualityLevel, minDistance, blockSize] = [30, 0.3, 7, 7];
 
   // parameters for lucas kanade optical flow
-  winSize = new cv.Size(15, 15);
-  maxLevel = 2;
-  criteria = new cv.TermCriteria(cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03);
+  const ws = guiState.tracking.winSize;
+  winSize = new cv.Size(ws, ws);
+  maxLevel = guiState.tracking.maxLevel;
+  criteria = new cv.TermCriteria(
+    cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 
+    guiState.tracking.criteria.maxCount, 
+    guiState.tracking.criteria.epsilon);
 
   // create some random colors
   color = [];
@@ -257,10 +261,15 @@ const guiState = {
   estimatePoseEnable: true,
   trackingEnable: true,
   tracking: {
-    algorithm: 'Lucas-Kanade',
     useInterval: false,
     interval: 2,
     restart: () => console.log('tracking is restarting'),
+    criteria: {
+      maxCount: 10,
+      epsilon: 0.03,
+    },
+    winSize: 15,
+    maxLevel: 2,
   },
 };
 
@@ -501,9 +510,6 @@ function setupGui() {
       
     });
 
-  tracking.add(guiState.tracking, 'restart').name('press to restart tracking')
-    .onChange( () => ready=false );
-
   tracking.add(guiState.tracking, 'interval', 1, 10)
     .onChange( value => {
 
@@ -520,6 +526,14 @@ function setupGui() {
       }, value*1000);
       
     });
+
+  tracking.add(guiState.tracking, 'winSize', 12, 30).step(1).onChange( () => ready=false );
+  tracking.add(guiState.tracking, 'maxLevel', 1, 5).step(1).onChange( () => ready=false );
+  let criteriaFolder = tracking.addFolder('LK Criteria');
+  criteriaFolder.add(guiState.tracking.criteria, 'maxCount', 9, 20).step(1).onChange( () => ready=false );
+  criteriaFolder.open();
+  criteriaFolder.add(guiState.tracking.criteria, 'epsilon', 0.01, 0.1).step(0.01).onChange( () => ready=false );
+  tracking.add(guiState.tracking, 'restart').name('press to restart tracking').onChange( () => ready=false );
   tracking.open();
 
   {

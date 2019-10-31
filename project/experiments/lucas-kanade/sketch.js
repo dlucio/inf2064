@@ -74,9 +74,11 @@ function setupTrackingAlgorithm() {
   let [maxCorners, qualityLevel, minDistance, blockSize] = [30, 0.3, 7, 7];
 
   // parameters for lucas kanade optical flow
-  winSize = new cv.Size(15, 15);
-  maxLevel = 2;
-  criteria = new cv.TermCriteria(cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03);
+  winSize = new cv.Size(params.winSize, params.winSize);
+  maxLevel = params.maxLevel;
+  criteria = new cv.TermCriteria(
+    cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 
+    params.criteriaMaxCount, params.criteriaEpsilon);
 
   // create some random colors
   color = [];
@@ -105,6 +107,13 @@ function setupTrackingAlgorithm() {
 
 }
 
+function reloadAlgorithm() {
+  ready = false;
+  video.stop();
+  video.play();
+  setupTrackingAlgorithm();
+}
+
 let params;
 let gui;
 function setupGui() {
@@ -112,6 +121,10 @@ function setupGui() {
     this.source = 'video';
     this.resolution = '640x480';
     this.videoOpacity= 1.0;
+    this.winSize = 15;
+    this.maxLevel = 2;
+    this.criteriaMaxCount = 10;
+    this.criteriaEpsilon = 0.03;
   };
 
   params = new Parameters();
@@ -141,6 +154,12 @@ function setupGui() {
   });
 
   gui.add(params, 'videoOpacity', 0.0, 1.0);
+  gui.add(params, 'winSize', 12, 30).step(1.0).onChange( () => reloadAlgorithm() );
+  gui.add(params, 'maxLevel', 1, 5 ).step(1.0).onChange( () => reloadAlgorithm() );
+  let criteriaFolder = gui.addFolder('Criteria');
+  criteriaFolder.add(params, 'criteriaMaxCount', 9, 20).name('max count').step(1.0).onChange( () => reloadAlgorithm() );
+  criteriaFolder.add(params, 'criteriaEpsilon', 0.01, 0.1).name('epsilon').step(0.01).onChange( () => reloadAlgorithm() );
+  criteriaFolder.open();
 }
 
 let ready = false;
@@ -167,7 +186,7 @@ function draw() {
         frame.data.set(video.pixels);
         cv.cvtColor(frame, frameGray, cv.COLOR_RGBA2GRAY);
         // calculate optical flow
-        cv.calcOpticalFlowPyrLK(oldGray, frameGray, p0, p1, st, err, winSize, maxLevel, criteria);
+        cv.calcOpticalFlowPyrLK(oldGray, frameGray, p0, p1, st, err, winSize, params.maxLevel, criteria);
         
         // select good points
         let goodNew = [];
