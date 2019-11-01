@@ -219,6 +219,7 @@ function draw() {
 
       } catch (error) {
         console.error(error);
+        ready=false;
       }
 
     }
