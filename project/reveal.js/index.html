@@ -4,11 +4,11 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Pose Tracking</title>
 
 		<link rel="stylesheet" href="css/reset.css">
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/black.css"  id='theme'>
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/monokai.css">
@@ -25,31 +25,137 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>
+				<section data-menu-title="">
 					<h2>Pose Tracking</h2>
-					<p>Djalma Lúcio</p>
-					<p> 
-						<small>INF2064 (2019.2)</small>
-						<!-- <small>Professor Marcelo Gattass</small> -->
-					</p>
+					<p>Djalma Lúcio Soares da Silvas</p>
+					<p><small>dsoares@inf.puc-rio.br</small></p>
+					<p><small>INF2064 (2019.2)</small></p>
+				</section>
+				
+				
+				<section data-menu-title="O projeto">
+					<h2>Projeto</h2>
+					<section data-menu-title="Projeto">
+						<h4>Pose Tracking</h4>
+						<p style="text-align: justify;">
+							Projeto final do curso INF2064:
+							Topics in Computer Vision, Deep Neural Networks, Geometric Modeling and Rendering
+						</p>
+						<p> 
+							<small>Professor Marcelo Gattass</small>
+						</p>
+					</section>
+
+					<section data-menu-title="Introdução">
+						<h5 style="text-align: left;">Introdução</h5>
+						<p style="text-align: justify; font-size: 0.75em;">
+							Estimação de pose (Pose Estimation) é um dos problemas tratados em Visão Computacional, 
+							onde são detectadas a posição e orientação de um objeto. 
+							Isso geralmente significa detectar os locais dos keypoints que descrevem o objeto.
+						</p>
+						<p style="text-align: justify; font-size: 0.75em;">
+							Inferir a pose de diversas pessoas em uma imagem possui um conjunto de desafios a serem superados. 
+							Primeiramente, cada imagem pode conter um número desconhecido de pessoas que podem estar em qualquer posição e escala. 
+							Além disso, as interações entre as pessoas normalmente gera interferência, devido ao contato e oclusão, 
+							dificultando a realização da associação das partes.
+								
+						</p>
+					</section>
+
+					<section data-menu-title="Objetivo">
+						<h5 style="text-align: left;">Objetivo</h5>
+						<p style="text-align: justify;">
+							O objetivo do projeto é realizar o rastreamento e a 
+							identificação da pose de diversas pessoas em tempo real no navegador. 
+						</p>
+					</section>
+
+					<section data-menu-title="Motivação">
+						<h5 style="text-align: left;">Motivação</h5>
+						<p style="text-align: justify; font-size: 0.9em;">
+							Atualmente há diversas aplicações que realizam a captura de movimento, 
+							contudo é necessário o uso de câmeras especiais e vestimenta apropriada para realizar esta tarefa.
+						</p>
+						<p style="text-align: justify; font-size: 0.9em;">
+							Esta tarefa tem como motivação a aplicação dos conhecimentos adquiridos durante sua execução, 
+							no contexto de animação de personagens humanos e humanóides, 
+							através da captura de movimentos tanto no ambiente 2D como no 3D.
+						</p>
+					</section>
+
+				</section>
+				
+				<section data-menu-title="Estimação de pose">
+					<h3>Estimação de pose</h3>
+
+					<section data-menu-title="Estimação de pose">
+						<h5 style="text-align: left;">Abordagens</h5>
+						<p style="text-align: justify;">
+							A tarefa de detectar e localizar os keypoints de diversas pessoas em uma imagem
+							é realizada através das seguintes abordagens:
+							<ul>
+								<li>Top-Down</li>
+								<li>Bottom-Up</li>
+							</ul>
+						</p>
+					</section>
+
+					<section data-menu-title="Top-Down">
+						<h5 style="text-align: left;">Top-Down</h5>
+						<div style="display: flex;">
+							<div style="width: 50%; margin-right: 5%;">
+								<p style="text-align: justify; font-size: 0.60em;">
+									A abordagem comum para estimar a pose é empregar um detector de pessoas, e então, 
+									para cada pessoa detectada, realizar a estimativa da pose. 
+									Esta abordagem é conhecida como abordagem top-down. 
+									Um dos principais problemas com esta abordagem ocorre quando o detector de pessoas falha, 
+									sendo assim não há como recuperar as informações necessárias (os keypoints) para a estimativa da pose.
+								</p>
+							</div>
+
+							<div style="flex-grow: 1;">
+								<img src="images/Top-Down.png" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.3em; margin-top: 0; text-align: justify;">
+									Todos as pessoas são detectas, para depois o keypoints serem detectados e feitas as ligações entre eles
+								</p>
+							</div>
+						</div>
+					</section>
+
+					<section data-menu-title="Bottom-Up">
+						<h5 style="text-align: left;">Bottom-Up</h5>
+						<div style="display: flex;">
+							<div style="width: 50%; margin-right: 5%;">
+								<p style="text-align: justify; font-size: 0.70em;">
+									Na abordagem bottom-up as partes são detectadas para todas os pessoas de uma única vez,
+									sendo assim, não sofre o problema ocasionado pelo detector de pessoas. 
+								</p>
+							</div>
+
+							<div style="flex-grow: 1;">
+								<img src="images/Bottom-Up.png" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.3em; margin-top: 0;">
+									Todos os keypoints são detectados e em seguida são feitas as ligações entre eles
+								</p>
+							</div>
+						</div>
+
+					</section>
+
 				</section>
 
-				<section>
-					<h4>Objetivo</h4>
-					<p style="text-align: justify;">
-						O objetivo do projeto é realizar o rastreamento e a 
-						identificação da pose de diversas pessoas em tempo real no navegador. 
-					</p>					
+				<section data-menu-title="PoseNet">
+					<h3>PoseNet</h3>
 				</section>
 
-				<section>
-					<h4>Arquitetura</h4>
-					<section>
+				<section data-menu-title="Arquitetura">
+					<h3>Arquitetura</h3>
+					<section data-menu-title="Arquitetura">
 						<div>
 							<img src="images/arquitetura.png" alt="" srcset="">
 						</div>
 					</section>
-					<section>
+					<section data-menu-title="Componentes">
 						<ul>
 							<li>PoseNet ...</li>
 							<li>ml5.js ...</li>
@@ -57,22 +163,22 @@
 							<li>p5.js ...</li>
 						</ul>
 					</section>
-					<section>PoseNet</section>
-					<section>ml5.js</section>
+					<section data-menu-title="PoseNet">PoseNet</section>
+					<section data-menu-title="ml5.js">ml5.js</section>
 				</section>
 
 				<section>
-					<h4>Experimentos</h4>
-					<section>
+					<h3>Experimentos</h3>
+					<section data-menu-title="Experimentos">
 						<p style="text-align: justify;">
 							Para um melhor entendimento das bibliotecas utilizadas no projeto, 
 							foram realizados os seguintes experimentos:
 							<ul>
-								<li>OpenCV: Meanshift & Camshift</li>
-								<li>OpenCV: Lucas-Kanade Optical Flow</li>
-								<li>PoseNet</li>
-								<li>PoseShift</li>
-								<li>PoseFlow</li>
+								<li><a href="../experiments/opencv/" target="_blank">OpenCV: Meanshift & Camshift</a></li>
+								<li><a href="../experiments/lucas-kanade/" target="_blank">OpenCV: Lucas-Kanade Optical Flow</a></li>
+								<li><a href="../experiments/posenet/" target="_blank">PoseNet</a></li>
+								<li><a href="../experiments/poseshift/" target="_blank">PoseShift</a></li>
+								<li><a href="../experiments/poseflow/" target="_blank">PoseFlow</a></li>
 							</ul>
 						</p>
 					</section>
@@ -116,18 +222,28 @@
 				</section>
 				
 				<section>
-					<h4>
+					<h3>
 						<a href="../posetracking/" target="_blank">Pose Tracking</a>
-					</h4>
-					<p style="text-align: justify;">
-						No projeto <a href="../posetracking/" target="_blank">Pose Tracking</a>  
-						é utilizado o modelo <u>PoseNet</u> para detectar a pose das diversas pessoas, 
-						e para o rastreamento e identificação de cada pose detectada é utilizado o 
-						algoritmo <u>Centroid Tracking</u>. 
-					</p>
+					</h3>
+					<section data-menu-title="Pose Tracking">
+						<p style="text-align: justify;">
+							No projeto <a href="../posetracking/" target="_blank">Pose Tracking</a>  
+							é utilizado o modelo 
+							<a href="https://github.com/tensorflow/tfjs-models/tree/master/posenet" target="_blank">PoseNet</a> 
+							para detectar a pose das diversas pessoas, 
+							e para o rastreamento e identificação de cada pose detectada é utilizado o algoritmo 
+							<a href="https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/" target="_blank">Centroid Tracking</a>. 
+						</p>
+					</section>
+
+					<section>
+						<h5 style="text-align: left;">
+							<a href="https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/" target="_blank">Centroid Tracking</a>
+						</h5>
+					</section>
 				</section>
 
-				<section>
+				<!-- <section>
 					<h4>Contribuições</h4>
 					<ul style="font-size: 0.8em;">
 						<li>Removido memory leak do ml5.PoseNet</li>
@@ -144,7 +260,7 @@
 							</ul>
 						</li>
 					</ul>
-				</section>
+				</section> -->
 
 				<section>
 					<h4>Trabalhos futuros</h4>
@@ -167,11 +283,19 @@
 			// - https://github.com/hakimel/reveal.js#configuration
 			// - https://github.com/hakimel/reveal.js#dependencies
 			Reveal.initialize({
+				menu: {
+					numbers: false,
+					openSlideNumber: true,
+					themes: true,
+					themesPath: 'css/theme/',
+					transitions: true,
+				},
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
 					{ src: 'plugin/markdown/markdown.js' },
 					{ src: 'plugin/notes/notes.js', async: true },
 					{ src: 'plugin/highlight/highlight.js', async: true },
+					{ src: 'plugin/reveal.js-menu/menu.js', async: true },
 					// Zoom in and out with Alt+click
 					{ src: 'plugin/zoom-js/zoom.js', async: true },
 				]
