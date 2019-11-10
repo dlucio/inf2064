@@ -26,7 +26,7 @@
 		<div class="reveal">
 			<div class="slides">
 				<section data-menu-title="">
-					<h2>Pose Tracking</h2>
+					<h1>Pose Tracking</h1>
 					<p>Djalma Lúcio Soares da Silvas</p>
 					<p><small>dsoares@inf.puc-rio.br</small></p>
 					<p><small>INF2064 (2019.2)</small></p>
@@ -182,6 +182,88 @@
 
 				<section data-menu-title="PoseNet">
 					<h3>PoseNet</h3>
+
+					<section data-menu-title="PoseNet">
+						<p style="text-align: justify; font-size: 1.0em;">
+							PoseNet é um modelo de machine learning usado para fazer a estimação de pose de pessoas 
+							em tempo real no navegador usando o TensorFlow.js.							
+						</p> 
+						<p style="text-align: justify; font-size: 1.0em;">
+							Esta seção apresenta uma visão geral do modelo.
+							Mais informações podem ser encontradas no repositório do
+							<a href="" target="_blank" rel="noopener noreferrer">projeto no github</a>
+							e no artigo 
+							<a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
+								Real-time Human Pose Estimation in the Browser with TensorFlow.js
+							</a>
+						</p>
+					</section>
+					<section data-menu-title="Modos de execução">
+						<p style="text-align: justify; font-size: 1.0em;">
+							O modelo PoseNet possui dois modos de execução: single-pose e multi-pose. <br>
+							Isto significa que ele pode ser usado para estimar a pose de somente uma única pessoa ou a pose de múltiplas pessoas
+							em uma imagem ou vídeo. 
+						</p>
+						
+					</section>
+
+					<section data-menu-title="Single-pose">
+						<h5 style="text-align: left; margin-top: 5%;">Single-pose</h5>
+						<div style="display: flex;">
+							<div style="width: 50%; margin-right: 5%;">
+								<p style="text-align: justify; font-size: 0.6em;">
+									A detecção de um única pessoa é mais rápida e mais simples.
+									Esse modo é ideal para o caso onde somente há uma pessoa no centro da imagem ou vídeo.
+								</p>
+								<p style="text-align: justify; font-size: 0.6em;">
+									A desvantagem deste modo é que se houver múltiplas pessoas na imagem, 
+									os keypoints de todas as pessoas serão estimadas como se fossem da mesma pessoa. 
+									Por exemplo, o braço esquerdo da pessoa nº 1 e o joelho direito da pessoa nº 2 
+									podem ser confundidos pelo algoritmo como pertencendo à mesma pose.
+								</p>
+							</div>
+
+							<div  style="flex-grow: 1;">
+								<img src="images/posenet_single_person.gif" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.3em; margin-top: 0;">
+									Algoritmo executado no modo single-pose
+								</p>
+							</div>
+
+						</div>
+					</section>
+
+					<section data-menu-title="Multi-pose">
+						<h5 style="text-align: left; margin-top: 5%;">Multi-pose</h5>
+						<div style="display: flex;">
+							<div style="width: 50%; margin-right: 5%;">
+								<p style="text-align: justify; font-size: 0.6em;">
+									O algoritmo de estimativa de pose para várias pessoas
+									é mais complexo e um pouco mais lento que o algoritmo de pose única.
+								</p>
+								<p style="text-align: justify; font-size: 0.6em;">
+									Contudo, tem a vantagem de que, se várias pessoas aparecerem em uma imagem, 
+									é menos provável que os keypoints detectados estejam associados à pose errada.
+								</p>
+								<p style="text-align: justify; font-size: 0.6em;">
+									Outra vantagem é que o desempenho não é afetado pelo número de pessoas na imagem de entrada. 
+									Isto é, se houver 15 pessoas para detectar ou 5, o tempo de computação será o mesmo.
+								</p>
+							</div>
+
+							<div  style="flex-grow: 1;">
+								<img src="images/posenet_multiple_person.gif" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.3em; margin-top: 0;">
+									Algoritmo executado no modo multi-pose
+								</p>
+							</div>
+
+						</div>
+					</section>
+
+					<section data-menu-title="Funcionamento">
+
+					</section>
 				</section>
 
 				<section data-menu-title="Arquitetura">
