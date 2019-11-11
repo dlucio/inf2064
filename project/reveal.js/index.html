@@ -27,7 +27,7 @@
 			<div class="slides">
 				<section data-menu-title="">
 					<h1>Pose Tracking</h1>
-					<p>Djalma Lúcio Soares da Silvas</p>
+					<p>Djalma Lúcio Soares da Silva</p>
 					<p><small>dsoares@inf.puc-rio.br</small></p>
 					<p><small>INF2064 (2019.2)</small></p>
 				</section>
@@ -41,8 +41,8 @@
 							Projeto final do curso INF2064:
 							Topics in Computer Vision, Deep Neural Networks, Geometric Modeling and Rendering
 						</p>
-						<p> 
-							<small>Professor Marcelo Gattass</small>
+						<p style="font-size: 0.9em; margin-top: 10%;"> 
+							Professor Marcelo Gattass
 						</p>
 					</section>
 
@@ -77,7 +77,7 @@
 							contudo é necessário o uso de câmeras especiais e vestimenta apropriada para realizar esta tarefa.
 						</p>
 						<p style="text-align: justify; font-size: 0.9em;">
-							Esta tarefa tem como motivação a aplicação dos conhecimentos adquiridos durante sua execução, 
+							Este projeto tem como motivação a aplicação dos conhecimentos adquiridos durante sua implementação, 
 							no contexto de animação de personagens humanos e humanóides, 
 							através da captura de movimentos tanto no ambiente 2D como no 3D.
 						</p>
@@ -192,7 +192,7 @@
 							Esta seção apresenta uma visão geral do modelo.
 							Mais informações podem ser encontradas no repositório do
 							<a href="" target="_blank" rel="noopener noreferrer">projeto no github</a>
-							e no artigo 
+							e no post 
 							<a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
 								Real-time Human Pose Estimation in the Browser with TensorFlow.js
 							</a>
@@ -344,7 +344,7 @@
 
 				<section data-menu-title="Arquitetura">
 					<h3>Arquitetura</h3>
-					<section data-menu-title="Arquitetura">
+					<section data-menu-title="Arquitetura (TBD)">
 						<div>
 							<img src="images/arquitetura.png" alt="" srcset="">
 						</div>
@@ -357,7 +357,7 @@
 							<li>p5.js ...</li>
 						</ul>
 					</section>
-					<section data-menu-title="PoseNet">PoseNet</section>
+					<!-- <section data-menu-title="PoseNet">PoseNet</section> -->
 					<section data-menu-title="ml5.js">ml5.js</section>
 				</section>
 
@@ -380,15 +380,30 @@
 						<h4><a href="../experiments/opencv/" target="_blank">OpenCV: Meanshift & Camshift</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/opencv/" target="_blank">OpenCV: Meanshift & Camshift</a> utiliza 
-							os algoritmos de rastreamento Meanshift e Camshift fornecidos pela biblioteca <em>OpenCV.js</em>
+							os algoritmos de rastreamento 
+							<a href="https://docs.opencv.org/trunk/df/def/tutorial_js_meanshift.html" target="_blank" rel="noopener noreferrer">
+								Meanshift e Camshift 
+							</a>
+							fornecidos pela biblioteca <em>OpenCV.js</em>.<br>
+							O código-fonte do experimento encontra-se disponível no
+							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/opencv/sketch.js" target="_blank" rel="noopener noreferrer">
+								github do projeto
+							</a>
 						</p>
 					</section>
 					<section>
 						<h4><a href="../experiments/lucas-kanade/" target="_blank">OpenCV: Lucas-Kanade Optical Flow</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/lucas-kanade/" target="_blank">OpenCV: Lucas-Kanade Optical Flow</a> 
-							para realizar o rastreamento utiliza sparse optical flow através do método Lucas-Kanade 
-							fornecido pela biblioteca <em>OpenCV.js</em>
+							para realizar o rastreamento utiliza sparse optical flow através do método 
+							<a href="https://docs.opencv.org/trunk/db/d7f/tutorial_js_lucas_kanade.html" target="_blank" rel="noopener noreferrer">
+								Lucas-Kanade 
+							</a>
+							fornecido pela biblioteca <em>OpenCV.js</em>.<br>
+							O código-fonte do experimento encontra-se disponível no
+							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/lucas-kanade/sketch.js" target="_blank" rel="noopener noreferrer">
+								github do projeto
+							</a>
 						</p>
 					</section>
 					<section>
@@ -396,21 +411,33 @@
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/posenet/" target="_blank">PoseNet</a> permite 
 							que sejam testados os diversos parâmentros utilizados pelo modelo PoseNet disponibilizado
-							pela biblioteca <em>ml5.js</em>
+							pela biblioteca <em>ml5.js</em>.<br>
+							O código-fonte do experimento encontra-se disponível no
+							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/posenet/sketch.js" target="_blank" rel="noopener noreferrer">
+								github do projeto
+							</a>
 						</p>
 					</section>
 					<section>
 						<h4><a href="../experiments/poseshift/" target="_blank">PoseShift</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/poseshift/" target="_blank">PoseShift</a>
-							é a integração entre os experimentos OpenCV: Meanshift & Camshift e PoseNet.
+							é a integração entre os experimentos OpenCV: Meanshift & Camshift e PoseNet. <br>
+							O código-fonte do experimento encontra-se disponível no
+							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/poseshift/sketch.js" target="_blank" rel="noopener noreferrer">
+								github do projeto
+							</a>
 						</p>
 					</section>
 					<section>
 						<h4><a href="../experiments/poseflow/" target="_blank">PoseFlow</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/poseflow/" target="_blank">PoseFlow</a>
-							é a integração entre os experimentos OpenCV: Lucas-Kanade Optical Flow e PoseNet.
+							é a integração entre os experimentos OpenCV: Lucas-Kanade Optical Flow e PoseNet.<br>
+							O código-fonte do experimento encontra-se disponível no
+							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/poseflow/sketch.js" target="_blank" rel="noopener noreferrer">
+								github do projeto
+							</a>
 						</p>
 					</section>					
 				</section>
