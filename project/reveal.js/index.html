@@ -200,7 +200,7 @@
 					</section>
 					<section data-menu-title="Modos de execução">
 						<p style="text-align: justify; font-size: 1.0em;">
-							O modelo PoseNet possui dois modos de execução: single-pose e multi-pose. <br>
+							O modelo PoseNet possui os modos de execução single-pose e multi-pose. <br>
 							Isto significa que ele pode ser usado para estimar a pose de somente uma única pessoa ou a pose de múltiplas pessoas
 							em uma imagem ou vídeo. 
 						</p>
@@ -261,8 +261,84 @@
 						</div>
 					</section>
 
-					<section data-menu-title="Funcionamento">
+					<section data-menu-title="Com funciona">
+						<h5 style="text-align: left; margin-top: 5%;">Como funciona</h5>
+						<p style="text-align: justify; font-size: 0.9em;">
+							A estimação de pose ocorre em duas fases:
+							<ol style="text-align: justify; font-size: 0.9em;">
+								<li>
+									Uma imagem RGB é utilizada como entrada para a CNN do modelo
+								</li>
+								<li>
+									Tanto no modo single-pose quanto no multi-pose, a saída do modelo é decodificada, obtendo-se:
+									<ul>
+										<li>as poses detectadas</li>
+										<li>o score de confiança das poses detectadas</li>
+										<li>a posição dos keypoints</li>
+										<li>o score de confiança dos keypoints</li>
+									</ul>
+								</li>
+							</ol>
+						</p>
+					</section>
 
+					<section data-menu-title="Pose">
+						<!-- <h5 style="text-align: left; margin-top: 5%;">Pose</h5> -->
+						<div style="display: flex;">
+							<div style="width: 100%; margin-right: 3%;">
+								<p style="text-align: left; font-size: 0.73em;">
+									<strong>Pose</strong>
+								</p>
+								<p style="text-align: justify; font-size: 0.60em;">
+									O modelo PoseNet retorna um objeto de pose 
+									que contém uma lista de keypoints e um score de confiança 
+									para cada pessoa detectada.
+								</p>
+
+								<p style="text-align: left; font-size: 0.72em;">
+									<strong>Score de confiança da pose</strong>
+								</p>
+								<p style="text-align: justify; font-size: 0.60em;">
+									Determina a confiança de que a posição estimada do keypoint é precisa. 
+									Seu valor varia entre 0.0 e 1.0.<br>
+									Este valor pode ser usado para ocultar keypoints que não são considerados precisos o suficiente.
+								</p>
+							</div>
+
+							<div  style="flex-grow: 1;">
+								<img src="images/posenet_confidence_score_vs_keypoint_score.png" alt="" srcset="" style="margin-bottom: 0; margin-top: 25%;">
+								<p style="font-size: 0.25em; margin-top: 0;">
+									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
+										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
+									</a>
+								</p>
+							</div>
+							
+						</div>
+					</section>
+
+					<section data-menu-title="Keypoints">
+						<h5 style="text-align: left; margin-top: 5%;">Keypoints</h5>
+						<div style="display: flex;">
+							<div style="width: 100%; margin-right: 5%;">
+								<p style="text-align: justify; font-size: 0.62em;">
+									Cada keypoint é uma parte da pose estimada de uma pessoa,
+									como nariz, orelha direita, joelho esquerdo, pé direito, etc.<br><br>
+									Nele está contida sua posição e o seu score de confiança.<br><br>
+									Atualmente, o modelo PoseNet detecta 17 keypoints.
+								</p>
+							</div>
+
+							<div  style="flex-grow: 1;">
+								<img src="images/posenet_keypoints.png" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.25em; margin-top: 0;">
+									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
+										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
+									</a>
+								</p>
+							</div>
+							
+						</div>
 					</section>
 				</section>
 
