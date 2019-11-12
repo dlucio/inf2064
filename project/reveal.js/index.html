@@ -116,7 +116,7 @@
 					<section data-menu-title="Top-Down">
 						<h5 style="text-align: left;">Top-Down</h5>
 						<div style="display: flex;">
-							<div style="width: 50%; margin-right: 5%;">
+							<div style="width: 60%; margin-right: 5%;">
 								<p style="text-align: justify; font-size: 0.60em;">
 									A abordagem comum para estimar a pose é empregar um detector de pessoas, e então, 
 									para cada pessoa detectada, realizar a estimativa da pose. 
@@ -138,7 +138,7 @@
 					<section data-menu-title="Bottom-Up">
 						<h5 style="text-align: left;">Bottom-Up</h5>
 						<div style="display: flex;">
-							<div style="width: 50%; margin-right: 5%;">
+							<div style="width: 60%; margin-right: 5%;">
 								<p style="text-align: justify; font-size: 0.70em;">
 									Na abordagem bottom-up as partes são detectadas para todas os pessoas de uma única vez,
 									sendo assim, não sofre o problema ocasionado pelo detector de pessoas. 
@@ -180,10 +180,10 @@
 				</section>
 
 
-				<section data-menu-title="PoseNet">
-					<h3>PoseNet</h3>
+				<section data-menu-title="PoseNet - visão geral">
+					<h3>PoseNet <sub><small>visão geral</small></sub></h3>
 
-					<section data-menu-title="PoseNet">
+					<section data-menu-title="PoseNet - visão geral">
 						<p style="text-align: justify; font-size: 1.0em;">
 							PoseNet é um modelo de machine learning usado para fazer a estimação de pose de pessoas 
 							em tempo real no navegador usando o TensorFlow.js.							
@@ -210,7 +210,7 @@
 					<section data-menu-title="Single-pose">
 						<h5 style="text-align: left; margin-top: 5%;">Single-pose</h5>
 						<div style="display: flex;">
-							<div style="width: 50%; margin-right: 5%;">
+							<div style="width: 60%; margin-right: 5%;">
 								<p style="text-align: justify; font-size: 0.6em;">
 									A detecção de um única pessoa é mais rápida e mais simples.
 									Esse modo é ideal para o caso onde somente há uma pessoa no centro da imagem ou vídeo.
@@ -236,7 +236,7 @@
 					<section data-menu-title="Multi-pose">
 						<h5 style="text-align: left; margin-top: 5%;">Multi-pose</h5>
 						<div style="display: flex;">
-							<div style="width: 50%; margin-right: 5%;">
+							<div style="width: 60%; margin-right: 5%;">
 								<p style="text-align: justify; font-size: 0.6em;">
 									O algoritmo de estimativa de pose para várias pessoas
 									é mais complexo e um pouco mais lento que o algoritmo de pose única.
@@ -285,28 +285,28 @@
 					<section data-menu-title="Pose">
 						<!-- <h5 style="text-align: left; margin-top: 5%;">Pose</h5> -->
 						<div style="display: flex;">
-							<div style="width: 100%; margin-right: 3%;">
-								<p style="text-align: left; font-size: 0.73em;">
+							<div style="margin-right: 3%; flex: 0 0 50%">
+								<p style="text-align: left; font-size: 0.85em;">
 									<strong>Pose</strong>
 								</p>
-								<p style="text-align: justify; font-size: 0.60em;">
+								<p style="text-align: justify; font-size: 0.55em;">
 									O modelo PoseNet retorna um objeto de pose 
 									que contém uma lista de keypoints e um score de confiança 
 									para cada pessoa detectada.
 								</p>
 
-								<p style="text-align: left; font-size: 0.72em;">
+								<p style="text-align: left; font-size: 0.85em;">
 									<strong>Score de confiança da pose</strong>
 								</p>
-								<p style="text-align: justify; font-size: 0.60em;">
+								<p style="text-align: justify; font-size: 0.55em;">
 									Determina a confiança de que a posição estimada do keypoint é precisa. 
 									Seu valor varia entre 0.0 e 1.0.<br>
 									Este valor pode ser usado para ocultar keypoints que não são considerados precisos o suficiente.
 								</p>
 							</div>
 
-							<div  style="flex-grow: 1;">
-								<img src="images/posenet_confidence_score_vs_keypoint_score.png" alt="" srcset="" style="margin-bottom: 0; margin-top: 25%;">
+							<div  style="flex: 1 0  65%;">
+								<img src="images/posenet_confidence_score_vs_keypoint_score.png" alt="" srcset="" style="margin-bottom: 0;">
 								<p style="font-size: 0.25em; margin-top: 0;">
 									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
 										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
@@ -318,10 +318,10 @@
 					</section>
 
 					<section data-menu-title="Keypoints">
-						<h5 style="text-align: left; margin-top: 5%;">Keypoints</h5>
+						<h5 style="text-align: left; margin-top: 5%; font-size: 0.80em;">Keypoints</h5>
 						<div style="display: flex;">
-							<div style="width: 100%; margin-right: 5%;">
-								<p style="text-align: justify; font-size: 0.62em;">
+							<div style="margin-right: 5%; flex: 0 0 50%">
+								<p style="text-align: justify; font-size: 0.55em;">
 									Cada keypoint é uma parte da pose estimada de uma pessoa,
 									como nariz, orelha direita, joelho esquerdo, pé direito, etc.<br><br>
 									Nele está contida sua posição e o seu score de confiança.<br><br>
@@ -329,7 +329,7 @@
 								</p>
 							</div>
 
-							<div  style="flex-grow: 1;">
+							<div  style="flex: 1 0 65%;">
 								<img src="images/posenet_keypoints.png" alt="" srcset="" style="margin-bottom: 0;">
 								<p style="font-size: 0.25em; margin-top: 0;">
 									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
@@ -341,6 +341,134 @@
 						</div>
 					</section>
 				</section>
+
+
+				<section data-menu-title="PoseNet - visão técnica">
+					<h3>PoseNet <sub><small>visão técnica</small></sub></h3>
+
+					<section data-menu-title="PoseNet - visão técnica">
+						<h5 style="text-align: left; margin-top: 5%; font-size: 0.62em;">Processo de estimação</h5>
+						<div style="display: flex;">
+							<div style="margin-right: 5%; flex: 0 0 50%">
+								<p style="text-align: justify; font-size: 0.55em;">
+									A imagem ao lado ilustra o processo de estimação de pose.
+
+									Existem duas versões do modelo PoseNet, uma delas foi treinada 
+									usando como backbone a MobileNet V1 e a outra ResNet 50.
+								</p>
+								<p style="text-align: justify; font-size: 0.55em;">
+
+									A versão com a ResNet possui maior precisão, 
+									contudo ela é bem maior e possui muitas camadas, 
+									o que torna mais lento o carregamento da página. 
+								</p>
+								<p style="text-align: justify; font-size: 0.55em;">
+
+									Sendo assim, a versão com MobileNet é a ideal para as aplicações de tempo real 
+									que irão rodar em dispositivos móveis e computadores menos potentes.
+										
+								</p>
+							</div>
+
+							<div  style="flex: 1 0 65%;">
+								<img src="images/posenet_single_person_pose_detector_pipeline.png" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.25em; margin-top: 0;">
+									Pipeline de estimação de pose<br>
+									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
+										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
+									</a>
+								</p>
+							</div>
+							
+						</div>
+					</section>
+
+					<section data-menu-title="Output stride">
+						<h5 style="text-align: left; margin-top: 5%; margin-bottom:0; font-size: 0.62em;">Output stride</h5>
+						<div style="display: flex;">
+							<div style="margin-right: 5%; flex: 0 0 50%">
+								<p style="text-align: justify; font-size: 0.450em;">
+									O modelo PoseNet é invariante com relação ao tamanho da imagem, 
+									isto significa que ele pode estimar a pose independente da escala da imagem. 
+									
+								</p>
+								<p style="text-align: justify; font-size: 0.450em;">
+									Sendo assim o modelo pode  ter sua precisão aumentada apenas configurando 
+									o parâmetro output stride em tempo de execução.  
+									Lembrando que aumentar a precisão diminui o desempenho. 
+									
+								</p>
+								<p style="text-align: justify; font-size: 0.450em;">
+
+									O parâmetro output stride determina o quanto a saída será diminuída em relação ao tamanho da imagem de entrada.
+									Este parâmetro influencia no tamanho dos layers da rede e saídas, e na precisão.
+								</p>
+								<p style="text-align: justify; font-size: 0.450em;">
+									O output stride pode ser configurado com os valores 8, 16 ou 32. 
+									Com o valor 32, o desempenho aumenta porém a precisão diminui. 
+									Já com o valor 8 a precisão aumenta mas o desempenho diminui. 
+										
+								</p>
+							</div>
+
+							<div  style="flex: 1 0 65%;">
+								<img src="images/posenet_output_stride.png" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.25em; margin-top: 0;">
+									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
+										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
+									</a>
+								</p>
+							</div>
+							
+						</div>
+					</section>
+
+					<section data-menu-title="Heatmaps e Offset Vectors" style="margin-left: 0;">
+						<h5 style="text-align: left; margin-top: 5%; margin-bottom:0; font-size: 0.62em;">heatmaps & offset vectors</h5>
+						<div style="display: flex;">
+							<div style="margin-left: -10%; flex: 0 0 60%;">
+								<p style="text-align: justify; font-size: 0.55em;">
+									As saídas do modelo PoseNet são um heatmap e um offset vector que devem ser 
+									decodificados para que seja encontrada a área da imagem onde há a maior probabilidade de haver keypoints da pose estimada. 
+									Isto significa que os keypoints da pose estimada estão associados a um tensor para heatmap e um tensor para o offset vector. 
+									
+								</p>
+								<p style="text-align: justify; font-size: 0.55em;">
+									Tanto o heatmap quanto o offset vector são tensores 3D com uma determinada altura e comprimento que são referenciadas como resolução. 
+									A resolução é definida através do tamanho da imagem e do valor do parâmetro output stride.																		
+									
+								</p>								
+							</div>
+
+							<div  style="flex: 1; margin-left: -10%;">
+								<!-- <img src="images/posenet_heatmap_offset_vector.png" alt="" srcset="" style="margin-bottom: 0;">
+								<p style="font-size: 0.25em; margin-top: 0;">
+									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
+										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
+									</a>
+								</p> -->
+
+								<pre style="width: 60%;">
+									<code data-trim data-noescape  style="font-size: 0.55em;">
+										Resolution = ((InputImageSize - 1) / OutputStride) + 1
+										// Example: an input image with a width of 225 pixels and an output
+										// stride of 16 results in an output resolution of 15
+										// 15 = ((225 - 1) / 16) + 1
+										
+									</code>
+								</pre>
+							</div>
+							
+						</div>
+						
+					</section>
+					<section>
+						<!-- Slide com a figura do heatmap e offset vector -->
+						<img src="images/posenet_heatmap_offset_vector.png" alt="" srcset="" style="margin-top: 5%;">
+					</section>				
+
+				</section>
+
 
 				<section data-menu-title="Arquitetura">
 					<h3>Arquitetura</h3>
@@ -510,6 +638,7 @@
 					themes: true,
 					themesPath: 'css/theme/',
 					transitions: true,
+					hideMissingTitles: true,
 				},
 				dependencies: [
 					{ src: 'plugin/markdown/marked.js' },
