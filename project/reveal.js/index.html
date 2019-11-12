@@ -423,7 +423,7 @@
 						</div>
 					</section>
 
-					<section data-menu-title="Heatmaps e Offset Vectors" style="margin-left: 0;">
+					<section data-menu-title="Heatmaps & Offset Vectors (I)" style="margin-left: 0;">
 						<h5 style="text-align: left; margin-top: 5%; margin-bottom:0; font-size: 0.62em;">heatmaps & offset vectors</h5>
 						<div style="display: flex;">
 							<div style="margin-left: -10%; flex: 0 0 60%;">
@@ -441,13 +441,6 @@
 							</div>
 
 							<div  style="flex: 1; margin-left: -10%;">
-								<!-- <img src="images/posenet_heatmap_offset_vector.png" alt="" srcset="" style="margin-bottom: 0;">
-								<p style="font-size: 0.25em; margin-top: 0;">
-									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
-										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
-									</a>
-								</p> -->
-
 								<pre style="width: 60%;">
 									<code data-trim data-noescape  style="font-size: 0.55em;">
 										Resolution = ((InputImageSize - 1) / OutputStride) + 1
@@ -465,7 +458,143 @@
 					<section>
 						<!-- Slide com a figura do heatmap e offset vector -->
 						<img src="images/posenet_heatmap_offset_vector.png" alt="" srcset="" style="margin-top: 5%;">
-					</section>				
+					</section>
+
+
+					<section data-menu-title="Heatmaps & Offset Vectors (II)" style="margin-left: 0;">
+						<div style="display: flex;">
+							<div style="margin-left: -10%; flex: 0 0 60%;">
+								<h5 style="text-align: left; margin-top: 5%; margin-bottom:0; font-size: 0.62em;">heatmaps</h5>
+								<p style="text-align: justify; font-size: 0.55em;">
+									Cada heatmap é um tensor 3D de tamanho resolução x resolução x 17, 
+									onde 17 é o número de keypoints detectados pelo PoseNet.
+								</p> 
+								<p style="text-align: justify; font-size: 0.55em;">
+									Por exemplo, uma imagem com tamanho de 225 e output stride de 16, resultará em um tensor de 15x15x17. 
+									Cada fatia corresponde a um específico keypoint no heatmap. 
+									Cada posição no headmap possui um score de confiança, 
+									o qual é a probabilidade que o keypoint existe naquela posição. 
+																			
+								</p>
+								<p style="text-align: justify; font-size: 0.55em;">
+									Ela também pode ser vista como a imagem original sendo dividida em uma gride de 15x15, 
+									onde os scores do heatmap fornecem uma classificação da probabilidade de cada keypoint existir em cada quadrado do gride.
+								</p>								
+							</div>
+
+							<div  style="flex: 1; margin-left: 5%;">
+								<h5 style="text-align: left; margin-top: 6%; margin-bottom:0; font-size: 0.62em;">offset vectors</h5>
+
+								<p style="text-align: justify; font-size: 0.55em;">
+									Cada offset vector é um tensor 3D de tamanho resolução x resolução x 34, 
+									onde 34 é o número de keypoints vezes 2. 									
+								</p>
+								<p style="text-align: justify; font-size: 0.55em;">
+										Por exemplo, uma imagem com tamanho de 225 e output stride de 16, resultará em um tensor de 15x15x34. 
+										Sabendo que os heatmaps são um aproximação de os keypoints estão, 
+										os offset vectors correspondem em localização aos pontos do heatmap, 
+										e são usados para fazer a predição da localização exata dos keypoints. 
+								</p>
+								<p style="text-align: justify; font-size: 0.55em;">
+									Nas primeiras 17 fatias do offset vector estão os valores da coordenada x 
+									e as últimas 17 fatias estão os valores da coordenada y.
+								</p>
+							</div>
+							
+						</div>
+						
+					</section>
+					
+					<section data-menu-title="Estimando a pose">
+						<h5 style="text-align: left; margin-top: 5%; margin-left: -10%; font-size: 0.62em;">Estimando a pose</h5>
+						<div style="display: flex;">
+							<div style="margin-left: -10%; flex: 0 0 50%;">
+								<p style="text-align: justify; font-size: 0.45em;">
+									Depois que a imagem é processada pelo modelo, alguns cálculos são realizados para estimar a pose a partir das saídas. 
+								</p> 
+								<p style="text-align: justify; font-size: 0.45em;">
+									Por exemplo, no modo single-pose é retornado o score da confiança da pose, 
+									o qual contém um array de keypoints, indexados pelo ID da parte, 
+									cada um contendo o score da confiança e as coordenadas x,y da posição.
+								</p>
+								<p style="text-align: justify; font-size: 0.45em;">
+									Para obter os keypoints da pose:
+								</p>
+									<ol style="text-align: justify; font-size: 0.45em;">
+										<li>
+											Aplica-se uma ativação sigmoid no mapa de calor para se obter os scores
+											<pre style="width: 40%;">
+												<code data-trim data-noescape class="hljs" style="font-size: 1.3em;">
+													scores = heatmap.sigmoid()
+												</code>
+											</pre>
+										</li>
+										<!-- <li>
+											Aplica-se uma ativação sigmoid no mapa de calor para se obter os scores
+											<pre><code style="margin-left: -10%;" data-trim="" class="hljs" data-line-numbers="4,8-11">
+													import React, { useState } from 'react';
+														
+													function Example() {
+														const [count, setCount] = useState(0);
+														
+														return (
+														<div>
+															<p>You clicked {count} times</p>
+															<button onClick={() => setCount(count + 1)}>
+															Click me
+															</button>
+														</div>
+														);
+													}
+													</code></pre>
+										</li> -->
+										<li>
+											É aplicado o argmax2d no score de confiança do keypoint para obter os índices x e  y 
+											no heatmap com o maior score de cada parte, ou seja é essencialmente onde a parte existe. 
+											É retornado um tensor de tamanho 17x2, onde cada linha dele estão os índices y e x do heatmap. 
+											<pre style="width: 55%;">
+												<code data-trim data-noescape class="javascript" style="font-size: 1.3em;">
+													heatmapPositions = scores.argmax(y, x)
+												</code>
+											</pre>
+										</li>
+									</ol>
+								<!-- </p>														 -->
+							</div>
+
+							<div  style="flex: 1; margin-left: 5%;">
+								<p style="text-align: justify; font-size: 0.55em;">
+									<ol start="3" style="text-align: justify; font-size: 0.45em;">
+										<li>
+											O offset vector de cada parte é recuperado ao usar  os índices x e y retornados 
+											pelo objeto offset que usa os índices x e y correspondentes no heatmap para a parte.  
+											Por exemplo, para a parte k, quando a posição no heatmap for x e y, o offset vector é:
+											<pre style="width: 90%;">
+												<code data-trim data-noescape class="javascript" style="font-size: 1.3em;">
+													offsetVector = [offsets.get(y, x, k), offsets.get(y, x, 17 + k)]
+												</code>
+											</pre>
+										</li>
+										<li>
+											Para obter o keypoint, os índices x e y do heatmap de cada parte são multiplicados pelo output stride 
+											e depois adicionado ao seu offset vector correspondente, que está na mesma escala da imagem original.
+											<pre style="width: 94%;">
+												<code data-trim data-noescape class="javascript" style="font-size: 1.3em;">
+													keypointPositions = heatmapPositions * outputStride + offsetVectors
+												</code>
+											</pre>
+										</li>
+										<li>
+											O score da confiança de cada keypoint é o score da posição do seu heatmap. 
+											E o score da confiança da pose é a média dos scores dos keypoints.
+										</li>
+									</ol>
+								</p>
+							</div>
+							
+						</div>
+
+					</section>
 
 				</section>
 
