@@ -286,32 +286,32 @@
 						<!-- <h5 style="text-align: left; margin-top: 5%;">Pose</h5> -->
 						<div style="display: flex;">
 							<div style="margin-right: 3%; flex: 0 0 50%">
-								<p style="text-align: left; font-size: 0.85em;">
+								<p style="text-align: left; font-size: 0.90em;">
 									<strong>Pose</strong>
 								</p>
-								<p style="text-align: justify; font-size: 0.55em;">
+								<p style="text-align: justify; font-size: 0.60em;">
 									O modelo PoseNet retorna um objeto de pose 
 									que contém uma lista de keypoints e um score de confiança 
 									para cada pessoa detectada.
 								</p>
 
-								<p style="text-align: left; font-size: 0.85em;">
+								<p style="text-align: left; font-size: 0.90em;">
 									<strong>Score de confiança da pose</strong>
 								</p>
-								<p style="text-align: justify; font-size: 0.55em;">
+								<p style="text-align: justify; font-size: 0.60em;">
 									Determina a confiança de que a posição estimada do keypoint é precisa. 
 									Seu valor varia entre 0.0 e 1.0.<br>
 									Este valor pode ser usado para ocultar keypoints que não são considerados precisos o suficiente.
 								</p>
 							</div>
 
-							<div  style="flex: 1 0  65%;">
-								<img src="images/posenet_confidence_score_vs_keypoint_score.png" alt="" srcset="" style="margin-bottom: 0;">
-								<p style="font-size: 0.25em; margin-top: 0;">
+							<div  style="flex: 1 0  60%;">
+								<img src="images/posenet_confidence_score_vs_keypoint_score.png" alt="" srcset="" style="margin-bottom: 0; margin-top: 15%;">
+								<!-- <p style="font-size: 0.25em; margin-top: 0;">
 									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
 										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
 									</a>
-								</p>
+								</p> -->
 							</div>
 							
 						</div>
@@ -321,7 +321,7 @@
 						<h5 style="text-align: left; margin-top: 5%; font-size: 0.80em;">Keypoints</h5>
 						<div style="display: flex;">
 							<div style="margin-right: 5%; flex: 0 0 50%">
-								<p style="text-align: justify; font-size: 0.55em;">
+								<p style="text-align: justify; font-size: 0.65em;">
 									Cada keypoint é uma parte da pose estimada de uma pessoa,
 									como nariz, orelha direita, joelho esquerdo, pé direito, etc.<br><br>
 									Nele está contida sua posição e o seu score de confiança.<br><br>
@@ -329,13 +329,13 @@
 								</p>
 							</div>
 
-							<div  style="flex: 1 0 65%;">
+							<div  style="flex: 1 0 60%;">
 								<img src="images/posenet_keypoints.png" alt="" srcset="" style="margin-bottom: 0;">
-								<p style="font-size: 0.25em; margin-top: 0;">
+								<!-- <p style="font-size: 0.25em; margin-top: 0;">
 									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
 										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
 									</a>
-								</p>
+								</p> -->
 							</div>
 							
 						</div>
@@ -347,22 +347,22 @@
 					<h3>PoseNet <sub><small>visão técnica</small></sub></h3>
 
 					<section data-menu-title="PoseNet - visão técnica">
-						<h5 style="text-align: left; margin-top: 5%; font-size: 0.62em;">Processo de estimação</h5>
+						<h5 style="text-align: left; margin-top: 5%; font-size: 0.80em;">Processo de estimação</h5>
 						<div style="display: flex;">
 							<div style="margin-right: 5%; flex: 0 0 50%">
-								<p style="text-align: justify; font-size: 0.55em;">
+								<p style="text-align: justify; font-size: 0.60em;">
 									A imagem ao lado ilustra o processo de estimação de pose.
 
 									Existem duas versões do modelo PoseNet, uma delas foi treinada 
 									usando como backbone a MobileNet V1 e a outra ResNet 50.
 								</p>
-								<p style="text-align: justify; font-size: 0.55em;">
+								<p style="text-align: justify; font-size: 0.60em;">
 
 									A versão com a ResNet possui maior precisão, 
 									contudo ela é bem maior e possui muitas camadas, 
 									o que torna mais lento o carregamento da página. 
 								</p>
-								<p style="text-align: justify; font-size: 0.55em;">
+								<p style="text-align: justify; font-size: 0.60em;">
 
 									Sendo assim, a versão com MobileNet é a ideal para as aplicações de tempo real 
 									que irão rodar em dispositivos móveis e computadores menos potentes.
@@ -370,40 +370,40 @@
 								</p>
 							</div>
 
-							<div  style="flex: 1 0 65%;">
+							<div  style="flex: 1 0 60%;">
 								<img src="images/posenet_single_person_pose_detector_pipeline.png" alt="" srcset="" style="margin-bottom: 0;">
-								<p style="font-size: 0.25em; margin-top: 0;">
+								<!-- <p style="font-size: 0.25em; margin-top: 0;">
 									Pipeline de estimação de pose<br>
 									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
 										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
 									</a>
-								</p>
+								</p> -->
 							</div>
 							
 						</div>
 					</section>
 
 					<section data-menu-title="Output stride">
-						<h5 style="text-align: left; margin-top: 5%; margin-bottom:0; font-size: 0.62em;">Output stride</h5>
+						<h5 style="text-align: left; margin-top: 5%; margin-bottom:0; font-size: 0.70em;">Output stride</h5>
 						<div style="display: flex;">
 							<div style="margin-right: 5%; flex: 0 0 50%">
-								<p style="text-align: justify; font-size: 0.450em;">
+								<p style="text-align: justify; font-size: 0.50em;">
 									O modelo PoseNet é invariante com relação ao tamanho da imagem, 
 									isto significa que ele pode estimar a pose independente da escala da imagem. 
 									
 								</p>
-								<p style="text-align: justify; font-size: 0.450em;">
+								<p style="text-align: justify; font-size: 0.50em;">
 									Sendo assim o modelo pode  ter sua precisão aumentada apenas configurando 
 									o parâmetro output stride em tempo de execução.  
 									Lembrando que aumentar a precisão diminui o desempenho. 
 									
 								</p>
-								<p style="text-align: justify; font-size: 0.450em;">
+								<p style="text-align: justify; font-size: 0.50em;">
 
 									O parâmetro output stride determina o quanto a saída será diminuída em relação ao tamanho da imagem de entrada.
 									Este parâmetro influencia no tamanho dos layers da rede e saídas, e na precisão.
 								</p>
-								<p style="text-align: justify; font-size: 0.450em;">
+								<p style="text-align: justify; font-size: 0.50em;">
 									O output stride pode ser configurado com os valores 8, 16 ou 32. 
 									Com o valor 32, o desempenho aumenta porém a precisão diminui. 
 									Já com o valor 8 a precisão aumenta mas o desempenho diminui. 
@@ -411,13 +411,13 @@
 								</p>
 							</div>
 
-							<div  style="flex: 1 0 65%;">
+							<div  style="flex: 1 0 60%;">
 								<img src="images/posenet_output_stride.png" alt="" srcset="" style="margin-bottom: 0;">
-								<p style="font-size: 0.25em; margin-top: 0;">
+								<!-- <p style="font-size: 0.25em; margin-top: 0;">
 									Fonte: <a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
 										<i>Real-time Human Pose Estimation in the Browser with TensorFlow.js</i>
 									</a>
-								</p>
+								</p> -->
 							</div>
 							
 						</div>
@@ -482,8 +482,8 @@
 								</p>								
 							</div>
 
-							<div  style="flex: 1; margin-left: 5%;">
-								<h5 style="text-align: left; margin-top: 6%; margin-bottom:0; font-size: 0.62em;">offset vectors</h5>
+							<div  style="flex: 1 0 60%; margin-left: 5%;">
+								<h5 style="text-align: left; margin-top: 5%; margin-bottom:0; font-size: 0.62em;">offset vectors</h5>
 
 								<p style="text-align: justify; font-size: 0.55em;">
 									Cada offset vector é um tensor 3D de tamanho resolução x resolução x 34, 
@@ -520,46 +520,26 @@
 								<p style="text-align: justify; font-size: 0.45em;">
 									Para obter os keypoints da pose:
 								</p>
-									<ol style="text-align: justify; font-size: 0.45em;">
-										<li>
-											Aplica-se uma ativação sigmoid no mapa de calor para se obter os scores
-											<pre style="width: 40%;">
-												<code data-trim data-noescape class="hljs" style="font-size: 1.3em;">
-													scores = heatmap.sigmoid()
-												</code>
-											</pre>
-										</li>
-										<!-- <li>
-											Aplica-se uma ativação sigmoid no mapa de calor para se obter os scores
-											<pre><code style="margin-left: -10%;" data-trim="" class="hljs" data-line-numbers="4,8-11">
-													import React, { useState } from 'react';
-														
-													function Example() {
-														const [count, setCount] = useState(0);
-														
-														return (
-														<div>
-															<p>You clicked {count} times</p>
-															<button onClick={() => setCount(count + 1)}>
-															Click me
-															</button>
-														</div>
-														);
-													}
-													</code></pre>
-										</li> -->
-										<li>
-											É aplicado o argmax2d no score de confiança do keypoint para obter os índices x e  y 
-											no heatmap com o maior score de cada parte, ou seja é essencialmente onde a parte existe. 
-											É retornado um tensor de tamanho 17x2, onde cada linha dele estão os índices y e x do heatmap. 
-											<pre style="width: 55%;">
-												<code data-trim data-noescape class="javascript" style="font-size: 1.3em;">
-													heatmapPositions = scores.argmax(y, x)
-												</code>
-											</pre>
-										</li>
-									</ol>
-								<!-- </p>														 -->
+								<ol style="text-align: justify; font-size: 0.45em;">
+									<li>
+										Aplica-se uma ativação sigmoid no mapa de calor para se obter os scores
+										<pre style="width: 42%;">
+											<code data-trim data-noescape class="hljs" style="font-size: 1.3em;">
+												scores = heatmap.sigmoid()
+											</code>
+										</pre>
+									</li>
+									<li>
+										É aplicado o argmax2d no score de confiança do keypoint para obter os índices x e  y 
+										no heatmap com o maior score de cada parte, ou seja é essencialmente onde a parte existe. 
+										É retornado um tensor de tamanho 17x2, onde cada linha dele estão os índices y e x do heatmap. 
+										<pre style="width: 62%;">
+											<code data-trim data-noescape class="javascript" style="font-size: 1.3em;">
+												heatmapPositions = scores.argmax(y, x)
+											</code>
+										</pre>
+									</li>
+								</ol>
 							</div>
 
 							<div  style="flex: 1; margin-left: 5%;">
@@ -641,14 +621,14 @@
 							<a href="https://docs.opencv.org/trunk/df/def/tutorial_js_meanshift.html" target="_blank" rel="noopener noreferrer">
 								Meanshift e Camshift 
 							</a>
-							fornecidos pela biblioteca <em>OpenCV.js</em>.<br>
+							fornecidos pela biblioteca <em>OpenCV.js</em>.<br><br>
 							O código-fonte do experimento encontra-se disponível no
 							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/opencv/sketch.js" target="_blank" rel="noopener noreferrer">
 								github do projeto
 							</a>
 						</p>
 					</section>
-					<section>
+					<section data-menu-title="OpenCV: Lucas-Kanade">
 						<h4><a href="../experiments/lucas-kanade/" target="_blank">OpenCV: Lucas-Kanade Optical Flow</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/lucas-kanade/" target="_blank">OpenCV: Lucas-Kanade Optical Flow</a> 
@@ -656,7 +636,7 @@
 							<a href="https://docs.opencv.org/trunk/db/d7f/tutorial_js_lucas_kanade.html" target="_blank" rel="noopener noreferrer">
 								Lucas-Kanade 
 							</a>
-							fornecido pela biblioteca <em>OpenCV.js</em>.<br>
+							fornecido pela biblioteca <em>OpenCV.js</em>.<br><br>
 							O código-fonte do experimento encontra-se disponível no
 							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/lucas-kanade/sketch.js" target="_blank" rel="noopener noreferrer">
 								github do projeto
@@ -668,7 +648,7 @@
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/posenet/" target="_blank">PoseNet</a> permite 
 							que sejam testados os diversos parâmentros utilizados pelo modelo PoseNet disponibilizado
-							pela biblioteca <em>ml5.js</em>.<br>
+							pela biblioteca <em>ml5.js</em>.<br><br>
 							O código-fonte do experimento encontra-se disponível no
 							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/posenet/sketch.js" target="_blank" rel="noopener noreferrer">
 								github do projeto
@@ -679,7 +659,7 @@
 						<h4><a href="../experiments/poseshift/" target="_blank">PoseShift</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/poseshift/" target="_blank">PoseShift</a>
-							é a integração entre os experimentos OpenCV: Meanshift & Camshift e PoseNet. <br>
+							é a integração entre os experimentos OpenCV: Meanshift & Camshift e PoseNet. <br><br>
 							O código-fonte do experimento encontra-se disponível no
 							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/poseshift/sketch.js" target="_blank" rel="noopener noreferrer">
 								github do projeto
@@ -690,7 +670,7 @@
 						<h4><a href="../experiments/poseflow/" target="_blank">PoseFlow</a></h4>
 						<p style="text-align: justify;">
 							O experimento <a href="../experiments/poseflow/" target="_blank">PoseFlow</a>
-							é a integração entre os experimentos OpenCV: Lucas-Kanade Optical Flow e PoseNet.<br>
+							é a integração entre os experimentos OpenCV: Lucas-Kanade Optical Flow e PoseNet.<br><br>
 							O código-fonte do experimento encontra-se disponível no
 							<a href="https://github.com/dlucio/inf2064/blob/master/project/experiments/poseflow/sketch.js" target="_blank" rel="noopener noreferrer">
 								github do projeto
@@ -710,15 +690,164 @@
 							<a href="https://github.com/tensorflow/tfjs-models/tree/master/posenet" target="_blank">PoseNet</a> 
 							para detectar a pose das diversas pessoas, 
 							e para o rastreamento e identificação de cada pose detectada é utilizado o algoritmo 
-							<a href="https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/" target="_blank">Centroid Tracking</a>. 
+							<a href="https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/" target="_blank">Centroid Tracking</a>.
+							<br><br>
+							O código-fonte encontra-se disponível no
+							<a href="https://github.com/dlucio/inf2064/tree/master/project/posetracking" target="_blank" rel="noopener noreferrer">
+								github do projeto</a>.
 						</p>
 					</section>
 
-					<section>
-						<h5 style="text-align: left;">
-							<a href="https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/" target="_blank">Centroid Tracking</a>
+					<section data-menu-title="Centroid Tracking">
+						<h5 style="text-align: left; margin-top: 5%;">
+							Centroid Tracking
 						</h5>
+						<p style="text-align: justify; font-size: 0.75em;">
+							A implementação do algoritmo Centroid Tracking neste trabalho é uma conversão para Javascript
+							da implementação em Python encontrada e explicada com detalhes no post 
+							<a href="https://www.pyimagesearch.com/2018/07/23/simple-object-tracking-with-opencv/" target="_blank">
+								Simple object tracking with OpenCV.
+							</a>
+							<br><br>
+							Esse algoritmo é chamado de Centroid Tracking, pois se baseia na distância euclidiana entre 
+							(1) centróide de objeto existente, ou seja, objetos que o algoritmo já havia visto antes e 
+							(2) novos centróides de objeto entre frames subsequentes em um vídeo.
+							<br><br>
+							O algoritmo é processado em várias etapas conforme apresentado a seguir.
+						</p>
 					</section>
+
+					<section data-menu-title="Centroid Tracking: Etapa 1">
+						<h5 style="text-align: center; font-size: 0.80em;">
+							Etapa 1: Obter as coordenadas do bounding box e calcular os centróides
+						</h5>
+						<div style="display: flex;">
+							<div style="margin-left: -10%; flex: 0 0 60%;">
+								<p style="text-align: justify; font-size: 0.60em;">
+									A cada frame o algoritmo recebe as coordenadas da bounding box de cada objeto detectado no frame.
+									<br><br>
+									Estas bounding boxes são geradas a partir das coordenadas dos keypoints detectados pelo modelos PoseNet.
+									<br><br>
+									Estas coordenadas são utilizadas para calcular o centróide, ou seja, o centro da bounding box.
+									<br><br>
+									Como esse é o conjunto inicial de bounding boxes apresentado ao algoritmo, então, nesse momento, 
+									são criados os identificadores únicos dos objetos.
+								</p>
+							</div>
+
+							<div  style="flex: 1 0 45%; margin-left: 5%;">
+								<img src="images/simple_object_tracking_step1.png" alt="" srcset="">
+								<p style="font-size: 0.35em; margin-top: 0;">
+									Bounding boxes usadas para calcular os centróides
+								</p>
+							</div>
+						</div>
+					</section>
+
+					<section data-menu-title="Centroid Tracking: Etapa 2">
+						<h5 style="text-align: center; font-size: 0.80em;">
+							Etapa 2: Cálculo da distância Euclidiana entre as novas bounding boxes e os objetos existentes
+						</h5>
+						<div style="display: flex;">
+							<div style="margin-left: -10%; flex: 0 0 60%;">
+								<p style="text-align: justify;  font-size: 0.60em;">
+									Em cada frame subsequente é aplicada a Etapa 1 para calcular os centróides dos objetos; contudo,
+									ao invés de atribuir um identificador único para cada objeto detectado, 
+									primeiro é verificado se é possivel associar o centróide de um novo objeto (em amarelo) 
+									com o centróide de um objeto antigo (em rosa).
+									<br><br>
+									Para realizar este processo, é calculada a distância Euclidiana (setas verdes) 
+									entre cada par dos centróides dos objetos existentes e os centróides dos objetos de entrada.
+								</p>								
+							</div>
+
+							<div  style="flex: 1 0 45%; margin-left: 5%;">
+								<img src="images/simple_object_tracking_step2.png" alt="" srcset="">
+								<p style="font-size: 0.35em; margin-top: 0;">
+									Distância Euclidiana calculada entre os centróides existentes (vermelho) e os novos (verde)
+								</p>
+							</div>
+						</div>
+					</section>
+
+					<section data-menu-title="Centroid Tracking: Etapa 3">
+						<h5 style="text-align: center; font-size: 0.80em;">
+							Etapa 3: Atualizando as coordenadas do objetos existentes
+						</h5>
+						<div style="display: flex;">
+							<div style="margin-left: -10%; flex: 0 0 60%;">
+								<p style="text-align: justify;  font-size: 0.65em;">
+									A principal suposição usada pelo algoritmo Centroid Tracking é de que, provavelmente, 
+									um objeto irá se mover entre os frames subsequentes, mas a distância entre os centróides 
+									nos frames F<sub>t</sub> e F<sub>t+1</sub>
+									será menor do que todas as outras distâncias entre os objetos.
+									<br><br>
+									Portanto, se optarmos por associar os centróides com distâncias mínimas entre 
+									os frames subseqüentes, teremos o tracking dos objetos.
+																				
+								</p>
+							</div>
+
+							<div  style="flex: 1 0 45%; margin-left: 5%;">
+								<img src="images/simple_object_tracking_step3.png" alt="" srcset="">
+								<p style="font-size: 0.35em; margin-top: 0;">
+									O algoritmo associando centróides que minimizam suas respectivas distâncias euclidianas.
+								</p>
+							</div>
+						</div>
+					</section>
+
+					<section data-menu-title="Centroid Tracking: Passo 4">
+						<h5 style="text-align: center; font-size: 0.80em; margin-top: 3%;">
+							Etapa 4: Registrando novos objetos
+						</h5>
+						<div style="display: flex;">
+							<div style="margin-left: -10%; flex: 0 0 60%;">
+								<p style="text-align: justify;  font-size: 0.65em;">
+									No caso em que houver mais detecções de entrada do que 
+									objetos existentes sendo rastreados, é necessário registrar o novo objeto. <br><br>
+									"Registrar" significa simplesmente que o novo objeto será adicionado à lista de objetos rastreados,
+									realizando as seguintes ações:
+									<ol style="font-size: 0.60em; margin-left: 1.5em;">
+										<li>
+											Atribuindo um novo ID de objeto
+										</li>
+										<li>
+											Armazenando o centróide das coordenadas da bounding box para esse objeto
+										</li>
+									</ol>
+
+								</p>
+								<p style="text-align: justify;  font-size: 0.65em;">
+									Após feito o registro, a Etapa 2 é executada e o pipeline é repetido para cada frame no stream de vídeo.
+								</p>
+							</div>
+
+							<div  style="flex: 1 0 45%; margin-left: 5%;">
+								<img src="images/simple_object_tracking_step4.png" alt="" srcset="">
+								<p style="font-size: 0.35em; margin-top: 0;">
+									A figura demonstra o processo de usar as distâncias euclidianas mínimas 
+									para associar IDs de objetos existentes e, em seguida, registrar um novo objeto.
+								</p>
+							</div>
+						</div>
+					</section>
+
+					<section data-menu-title="Centroid Tracking: Passo 5">
+						<h5 style="text-align: center; font-size: 0.80em;">
+							Passo 5: Cancelar o registro de objetos antigos
+						</h5>
+						<p style="text-align: justify;  font-size: 0.75em;">
+								Qualquer algoritmo de rastreamento de objeto razoável precisa ser capaz de lidar com a perda, 
+								o desaparecimento ou a saída de um objeto do campo de visão.
+								<br><br>
+								A maneira exata de lidar com essas situações depende realmente de como o tracker de objeto é implementado.
+								<br><br>
+								Nesta implementação, o registro de objetos antigos é cancelado quando eles não puderem corresponder 
+								a nenhum objeto existente para um total de N frames subsequentes.
+						</p>
+					</section>
+
 				</section>
 
 				<!-- <section>
