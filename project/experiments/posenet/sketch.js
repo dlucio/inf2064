@@ -90,6 +90,7 @@ function setupPoseNet() {
   }
   // Create a new poseNet method with a single detection
   poseNet = ml5.poseNet(video, config,  modelReady);
+  
 
   // This sets up an event that fills the global variable "poses"
   // with an array every time new poses are detected
@@ -195,6 +196,7 @@ function setupGui() {
           resizeCanvas(w, h);
           
         });
+        config.flipHorizontal = false;
 
       } else {
 
@@ -206,8 +208,10 @@ function setupGui() {
           // NOTE: hardcode canvas size for my camera
           // I don't know why video withxheight == 300x150;
           resizeCanvas(640, 480);
-
+          video.style("transform", "scaleX(-1)");
+          
         });
+        config.flipHorizontal = true;
         
       }
       video.parent( 'video-holder' );
