@@ -191,7 +191,9 @@
 						<p style="text-align: justify; font-size: 1.0em;">
 							Esta seção apresenta uma visão geral do modelo.
 							Mais informações podem ser encontradas no repositório do
-							<a href="" target="_blank" rel="noopener noreferrer">projeto no github</a>
+							<a href="https://github.com/tensorflow/tfjs-models/tree/master/posenet" target="_blank" rel="noopener noreferrer">
+								projeto PoseNet no github
+							</a>
 							e no post 
 							<a href="https://medium.com/tensorflow/real-time-human-pose-estimation-in-the-browser-with-tensorflow-js-7dd0bc881cd5" target="_blank" rel="noopener noreferrer">
 								Real-time Human Pose Estimation in the Browser with TensorFlow.js
@@ -296,7 +298,7 @@
 								</p>
 
 								<p style="text-align: left; font-size: 0.90em;">
-									<strong>Score de confiança da pose</strong>
+									<strong>Score de confiança do keypoint</strong>
 								</p>
 								<p style="text-align: justify; font-size: 0.60em;">
 									Determina a confiança de que a posição estimada do keypoint é precisa. 
@@ -351,10 +353,10 @@
 						<div style="display: flex;">
 							<div style="margin-right: 5%; flex: 0 0 50%">
 								<p style="text-align: justify; font-size: 0.60em;">
-									A imagem ao lado ilustra o processo de estimação de pose.
+									A imagem ao lado ilustra o processo de estimação da pose.
 
 									Existem duas versões do modelo PoseNet, uma delas foi treinada 
-									usando como backbone a MobileNet V1 e a outra ResNet 50.
+									usando como backbone a MobileNet V1 e a outra a ResNet 50.
 								</p>
 								<p style="text-align: justify; font-size: 0.60em;">
 
@@ -393,15 +395,15 @@
 									
 								</p>
 								<p style="text-align: justify; font-size: 0.50em;">
-									Sendo assim o modelo pode  ter sua precisão aumentada apenas configurando 
-									o parâmetro output stride em tempo de execução.  
+									Sendo assim o modelo pode ter sua precisão aumentada apenas configurando,
+									em tempo de execução, o parâmetro output stride.  
 									Lembrando que aumentar a precisão diminui o desempenho. 
 									
 								</p>
 								<p style="text-align: justify; font-size: 0.50em;">
 
 									O parâmetro output stride determina o quanto a saída será diminuída em relação ao tamanho da imagem de entrada.
-									Este parâmetro influencia no tamanho dos layers da rede e saídas, e na precisão.
+									Este parâmetro influencia no tamanho dos layers da rede e das saídas, e na precisão.
 								</p>
 								<p style="text-align: justify; font-size: 0.50em;">
 									O output stride pode ser configurado com os valores 8, 16 ou 32. 
@@ -477,7 +479,7 @@
 																			
 								</p>
 								<p style="text-align: justify; font-size: 0.55em;">
-									Ela também pode ser vista como a imagem original sendo dividida em uma gride de 15x15, 
+									Ela também pode ser vista como a imagem original sendo dividida em um gride de 15x15, 
 									onde os scores do heatmap fornecem uma classificação da probabilidade de cada keypoint existir em cada quadrado do gride.
 								</p>								
 							</div>
@@ -491,8 +493,8 @@
 								</p>
 								<p style="text-align: justify; font-size: 0.55em;">
 										Por exemplo, uma imagem com tamanho de 225 e output stride de 16, resultará em um tensor de 15x15x34. 
-										Sabendo que os heatmaps são um aproximação de os keypoints estão, 
-										os offset vectors correspondem em localização aos pontos do heatmap, 
+										Sabendo que os heatmaps são um aproximação de onde os keypoints estão, 
+										os offset vectors correspondem, em localização, aos pontos do heatmap, 
 										e são usados para fazer a predição da localização exata dos keypoints. 
 								</p>
 								<p style="text-align: justify; font-size: 0.55em;">
@@ -522,7 +524,7 @@
 								</p>
 								<ol style="text-align: justify; font-size: 0.45em;">
 									<li>
-										Aplica-se uma ativação sigmoid no mapa de calor para se obter os scores
+										Aplica-se uma ativação sigmoid no heatmap para se obter os scores
 										<pre style="width: 42%;">
 											<code data-trim data-noescape class="hljs" style="font-size: 1.3em;">
 												scores = heatmap.sigmoid()
@@ -606,7 +608,7 @@
 						</h5>
 
 						<p style="text-align: justify; font-size: 0.90em;">
-							A biblioteca fornece acesso a algoritmos e modelos de aprendizado de máquina no navegador, 
+							A biblioteca fornece acesso aos algoritmos e modelos de machine learning no navegador, 
 							com base no TensorFlow.js sem outras dependências externas.
 							<br><br>
 							A biblioteca fornece diversos exemplos de código e tutoriais.
