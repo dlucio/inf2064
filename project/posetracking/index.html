@@ -58,15 +58,12 @@
       width: 100%;
       height: 100%;
       position: absolute;
-      /* top: 0;
-      left: 0; */
       align-content: center;
       text-align: center;
     }
 
     #sketch-holder {
       pointer-events: none;
-      z-index: 1;
     }
   </style>
   
@@ -74,41 +71,15 @@
 
 <body>
   <h1 class="title"> PoseNet + Centroid Tracking </h1>
-  <!-- <h2 class="title"> Projeto INF2064 2019.2</h2> -->
   
   <p id='status'>Loading model...</p>
-  <!-- <p id='opencv_status' class="hidden">Loading OpenCV...</p> -->
-
+  
   <div id="container">
       <!-- https://stackoverflow.com/questions/2941189/how-to-overlay-one-div-over-another-div -->
-    <div id='sketch-holder'></div>
-    <div id="video-holder">
-      <!-- Our sketch will go here! -->
-    </div>
+      <div id="video-holder"></div>
+      <div id='sketch-holder'></div>
   </div>
 
-  <!-- <p>Detect connected bright regions in video.</p> -->
-  <script>
-    window.Module = {
-        loaded: false,
-        print: console.log,
-        printErr: function(text) {
-            document.getElementById('opencv_status').innerHTML = text;
-            console.error(text);
-        },
-        setStatus: function(text) {
-            document.getElementById('opencv_status').innerHTML = text;
-            console.log(text);
-        },
-        onRuntimeInitialized: function() {
-            document.getElementById('opencv_status').innerHTML = 'OpenCV Loaded';
-            this.loaded = true;
-            
-            // it would be better if we created the sketch at this point
-        }
-    };
-  </script>
-  <!-- <script async src="../common/opencv.js"></script> -->
   <script src="../common/dat.gui.js"></script>
   <script src="../common/stats.js"></script>
   <script src="centroidtracker.js"></script>
